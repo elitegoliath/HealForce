@@ -1,0 +1,10 @@
+## Interface: 80100
+## Version: 0.1.0
+## Title: HealForce
+## Notes: A powerful tool for healers.
+## Author: ArsenalLagspike
+## DefaultState: enabled
+
+ArchitypeFrame.xml
+
+HealForce.lua

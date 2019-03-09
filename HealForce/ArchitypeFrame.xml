@@ -1,0 +1,24 @@
+<Ui xsi:schemaLocation="C:\Program Files (x86)\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
+    <Frame name="ArchitypeFrame" enableMouse="true" movable="true" hidden="false" virtual="true">
+        <Scripts>
+            <OnLoad>
+                self:RegisterForDrag("LeftButton")
+            </OnLoad>
+            <OnDragStart>
+                if not self.isLocked then
+                    self:StartMoving()
+                end
+            </OnDragStart>
+            <OnDragStop>
+                self:StopMovingOrSizing()
+            </OnDragStop>
+        </Scripts>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture>
+                    <Color r="0" g="0" b="0" a="0.3"/>
+                </Texture>
+            </Layer>
+        </Layers>
+    </Frame>
+</Ui>
