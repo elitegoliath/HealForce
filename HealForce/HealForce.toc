@@ -5,6 +5,7 @@
 ## Author: ArsenalLagspike
 ## DefaultState: enabled
 
-ArchitypeFrame.xml
+HF_GroupFrame.xml
+HF_ArchitypeFrame.xml
 
 HealForce.lua
