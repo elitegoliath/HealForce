@@ -6,6 +6,6 @@
 ## DefaultState: enabled
 
 HF_GroupFrame.xml
-HF_ArchitypeFrame.xml
+HF_UnitFrame.xml
 
 HealForce.lua
