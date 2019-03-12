@@ -1,4 +1,6 @@
+-- Init local variables.
 local _, hf = ...;
+local MyHealthBar = nil;
 
 print('HealForce.lua loaded.')
 
