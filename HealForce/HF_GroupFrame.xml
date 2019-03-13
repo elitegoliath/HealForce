@@ -1,10 +1,5 @@
 <Ui xsi:schemaLocation="C:\Program Files (x86)\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
     <Frame name="HF_GroupFrame" hidden="false" virtual="true" movable="true">
-        <Scripts>
-            <OnLoad>
-                print("HF_GroupFrame loaded.")
-            </OnLoad>
-        </Scripts>
         <Layers>
             <!-- Remove when debugging has finished. -->
             <Layer level="BACKGROUND">
@@ -30,14 +25,18 @@
                 </Layers>
                 <Scripts>
                     <OnMouseDown>
-                        StartDrag();
+                        HF_GroupFrame_StartDrag(self);
                     </OnMouseDown>
                     <OnMouseUp>
-                        StopDrag();
+                        HF_GroupFrame_StopDrag(self);
                     </OnMouseUp>
                 </Scripts>
             </Frame>
         </Frames>
+
+        <Scripts>
+            <OnLoad>HF_GroupFrame_Initialize(self)</OnLoad>
+        </Scripts>
 
     </Frame>
 </Ui>

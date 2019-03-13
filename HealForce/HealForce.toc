@@ -5,7 +5,11 @@
 ## Author: ArsenalLagspike
 ## DefaultState: enabled
 
-HF_GroupFrame.xml
+HF_UnitFrame.lua
 HF_UnitFrame.xml
 
+HF_GroupFrame.lua
+HF_GroupFrame.xml
+
 HealForce.lua
+HealForce.xml

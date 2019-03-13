@@ -1,30 +1,19 @@
 -- Init local variables.
 local _, hf = ...;
-local MyHealthBar = nil;
+local TestFrame = nil;
 
-hf.isLocked = false;
+-- hf.isLocked = false;
 
-function StartDrag()
-    TestFrame:StartMoving();
+-- hf:RegisterEvent('GROUP_ROSTER_UPDATE');
+
+-- hf:SetScript('OnEvent', function(self, event)
+--     script('On Event Firing: ' .. event);
+-- end);
+
+function HF_HealForce_Initialize(frame)
+    -- Create the first and currently only group frame.
+    TestFrame = CreateFrame('Frame', 'Test_Frame', UIParent, 'HF_GroupFrame');
+    TestFrame:SetSize(300, 300);
+    TestFrame:SetPoint('CENTER', UIParent, 'CENTER');
+    TestFrame.isLocked = false;
 end;
-
-function StopDrag()
-    TestFrame:StopMovingOrSizing();
-end;
-
-local TestFrame = CreateFrame('Frame', 'Test_Frame', UIParent, 'HF_GroupFrame');
-local MyHealthBar = CreateFrame('StatusBar', 'My_Health', TestFrame, 'HF_UnitFrame');
-
-MyHealthBar:RegisterEvent('UNIT_HEALTH');
-MyHealthBar:SetScript('OnEvent', function (self)
-    local currentHealth = UnitHealth('player');
-    local maxHealth = UnitHealthMax('player');
-
-    self:SetMinMaxValues(math.min(0, currentHealth), maxHealth);
-    self:SetValue(currentHealth);
-
-    print('updated');
-end);
-
-TestFrame:SetSize(300, 300);
-TestFrame:SetPoint('CENTER', UIParent, 'CENTER');

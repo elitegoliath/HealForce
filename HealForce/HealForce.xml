@@ -1,0 +1,7 @@
+<Ui xsi:schemaLocation="C:\Program Files (x86)\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
+    <Frame>
+        <Scripts>
+            <OnLoad>HF_HealForce_Initialize(self)</OnLoad>
+        </Scripts>
+    </Frame>
+</Ui>
