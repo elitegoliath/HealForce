@@ -6,8 +6,8 @@
         </Anchors>
         <BarTexture file="Interface\TargetingFrame\UI-StatusBar" />
         <BarColor r="0.3" g="0.5" b="1.0"/>
-        <Scripts>
+        <!-- <Scripts>
             <OnLoad>HF_UnitFrame_Initialize(self)</OnLoad>
-        </Scripts>
+        </Scripts> -->
     </StatusBar>
 </Ui>
