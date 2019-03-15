@@ -12,40 +12,48 @@ local _, hf = ...;
 
 local HF_GroupCollection = {};
 
-local function HF_EventActions(self, event)
-    -- if (event == 'UNIT_HEALTH') then
-    --     UpdateHealth(self);
-    -- elseif (event == 'UNIT_MAXHEALTH') then
-    --     SetMaxHealth();
-    -- end;
-    print(event);
+-- Returns a group class instance or nil.
+local function HF_GetGroupCollection(groupName)
+    return HF_GroupCollection[groupName];
 end;
 
+-- Returns a unit class instance or nil.
+local function HF_GetUnit(groupName, unitName)
+    local group = HF_GetGroupCollection(groupName);
+    local unit = nil;
+
+    -- If the group exists, find the unit.
+    if group then 
+        unit = group.units[unitName];
+    end;
+
+    return unit;
+end;
+
+-- All of the event actions are registered here.
+local function HF_EventActions(self, event, ...)
+    -- When a player's health or maximum health is changed...
+    if (event == 'UNIT_HEALTH') or (event == 'UNIT_MAXHEALTH') then
+        local unitName = select(1, ...);
+        local unit = HF_GetUnit('healer', unitName);
+
+        if unit then
+            unit:UpdateHealth();
+        end;
+    end;
+end;
+
+-- Register the events we care about in this mod.
 local function HF_RegisterEvents(frame)
     frame:RegisterEvent('UNIT_HEALTH');
     frame:RegisterEvent('UNIT_MAXHEALTH');
     frame:SetScript('OnEvent', HF_EventActions);
 end;
 
+-- Initialize the mod. Create the first frame, and establish the event listeners.
 function HF_HealForce_Initialize(frame)
     HF_RegisterEvents(frame);
 
     -- Create the initial group frame containing the player.
     HF_GroupCollection['healer'] = HF_Group.new('myGroupFrame', {'player'});
-
-
-
-    -- local testFrame = HF_Group.new({});
-    -- testFrame:sendMessage();
-
-    -- local testFrame2 = HF_Group.new({});
-    -- testFrame2:sendMessage();
-    -- testFrame:sendMessage();
-
-
-    -- Create the first and currently only group frame.
-    -- TestFrame = CreateFrame('Frame', 'Test_Frame', UIParent, 'HF_GroupFrame');
-    -- TestFrame:SetSize(300, 300);
-    -- TestFrame:SetPoint('CENTER', UIParent, 'CENTER');
-    -- TestFrame.isLocked = false;
 end;
