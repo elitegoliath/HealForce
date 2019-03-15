@@ -1,23 +1,40 @@
 -- Init local variables.
 local _, hf = ...;
 
--- local maxHealth = 100;
--- local currentHealth = 100;
-
 HF_Unit = {
+    frame = nil;
     maxHealth = 100;
     currentHealth = 100;
 };
+HF_Unit.__index = HF_Unit;
 
-local function SetMaxHealth()
-    maxHealth = UnitHealthMax('player');
+-- Update health for the HF_Unit class
+local function UpdateHealth(self)
+    self.maxHealth = UnitHealthMax(unitName);
+    self.currentHealth = UnitHealth(unitName);
+    self.frame:SetMinMaxValues(math.min(0, currentHealth), maxHealth);
+    self.frame:SetValue(currentHealth);
+
+    print('Update Health');
 end;
 
-local function UpdateHealth(frame)
-        currentHealth = UnitHealth('player');
-        frame:SetMinMaxValues(math.min(0, currentHealth), maxHealth);
-        frame:SetValue(currentHealth);
-        print('updated');
+function HF_Unit.new(unitName, parentFrame)
+    local self = setmetatable({}, HF_Unit);
+
+    -- Generate the unit frame.
+    self.frame = CreateFrame('StatusBar', unitName .. 'UnitFrame', parentFrame, 'HF_UnitFrame');
+
+    -- Set initial stats.
+    self.maxHealth = UnitHealthMax(unitName);
+    self.currentHealth = UnitHealth(unitName);
+
+    -- Set the frame to match.
+    self.frame:SetMinMaxValues(math.min(0, self.currentHealth), self.maxHealth);
+    self.frame:SetValue(self.currentHealth);
+
+    self.updateHealth = UpdateHealth;
+
+    return self;
 end;
 
 -- function HF_UnitFrame_Initialize(frame)

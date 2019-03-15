@@ -4,24 +4,27 @@ local _, hf = ...;
 -- local MyHealthBar = nil;
 -- local MyHealthBar2 = nil;
 
-local counter = 1;
-
 HF_Group = {
-    units = nil;
-    msg = nil;
+    frame = nil;
+    units = {};
 };
 HF_Group.__index = HF_Group;
 
-function HF_Group.new(units)
+function HF_Group.new(frameName, unitNames)
     local self = setmetatable({}, HF_Group);
-    self.units = units;
-    self.msg = counter;
-    counter = counter + 1;
-    return self;
-end;
 
-function HF_Group.sendMessage(self)
-    print(self.msg);
+    -- Create the group frame.
+    self.frame = CreateFrame('Frame', frameName, UIParent, 'HF_GroupFrame');
+    self.frame.isLocked = false;
+    self.frame:SetSize(300, 300);
+    self.frame:SetPoint('CENTER', UIParent, 'CENTER');
+    
+    -- Create all the units for the new frame.
+    for i, unitName in ipairs(unitNames) do
+        self.units[unitName] = HF_Unit.new(unitName, self.frame);
+    end;
+
+    return self;
 end;
 
 function HF_GroupFrame_StartDrag(frame)
