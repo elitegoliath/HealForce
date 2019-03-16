@@ -1,19 +1,49 @@
 <Ui xsi:schemaLocation="C:\Program Files (x86)\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
-    <Button name="HF_UnitFrame" virtual="true" enableMouse="true" hidden="false" inherits="SecureActionButtonTemplate">
-        <Size x="120" y="28"/>
+    <Frame name="HF_UnitFrame" virtual="true" hidden="false">
+        <Size x="130" y="64"/>
         <Anchors>
             <Anchor point="CENTER" />
         </Anchors>
+        <Layers>
+            <!-- Remove when debugging has finished. -->
+            <Layer level="BACKGROUND">
+                <Texture>
+                    <Color r="0" g="0" b="1" a="0.1"/>
+                </Texture>
+            </Layer>
+        </Layers>
 
         <Frames>
-            <StatusBar parentKey="HealthBar" minValue="0" maxValue="100" defaultValue="100" hidden="false" virtual="true">
-                <Size x="111" y="24"/>
+            <Button parentKey="HealthBar_Button" virtual="true" enableMouse="true" hidden="false" inherits="SecureActionButtonTemplate">
+                <Size x="128" y="32"/>
                 <Anchors>
-                    <Anchor point="CENTER" />
+                    <Anchor point="TOP" />
                 </Anchors>
-                <BarTexture file="Interface\TargetingFrame\UI-StatusBar" />
-                <BarColor r="0.3" g="0.5" b="1.0"/>
-            </StatusBar>
+                <Attributes>
+                    <Attribute name="type" value="spell" />
+                </Attributes>
+
+                <Frames>
+                    <StatusBar parentKey="HealthBar" minValue="0" maxValue="100" defaultValue="100" hidden="false" virtual="true">
+                        <Size x="128" y="32"/>
+                        <Anchors>
+                            <Anchor point="CENTER" />
+                        </Anchors>
+                        <BarTexture file="Interface\TargetingFrame\UI-StatusBar" />
+                        <BarColor r="0.3" g="0.5" b="1.0"/>
+                    </StatusBar>
+                </Frames>
+            </Button>
+
+            <Button parentKey="Spell1" inherits="SecureActionButtonTemplate" virtual="true" enableMouse="true" hidden="false">
+                <Size x="32" y="32"/>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" />
+                </Anchors>
+                <Attributes>
+                    <Attribute name="type" value="spell" />
+                </Attributes>
+            </Button>
         </Frames>
-    </Button>
+    </Frame>
 </Ui>

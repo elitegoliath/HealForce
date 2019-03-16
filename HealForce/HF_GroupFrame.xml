@@ -33,10 +33,5 @@
                 </Scripts>
             </Frame>
         </Frames>
-
-        <!-- <Scripts>
-            <OnLoad>HF_GroupFrame_Initialize(self)</OnLoad>
-        </Scripts> -->
-
     </Frame>
 </Ui>
