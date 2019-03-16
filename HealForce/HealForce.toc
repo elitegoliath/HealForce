@@ -5,6 +5,8 @@
 ## Author: ArsenalLagspike
 ## DefaultState: enabled
 
+HF_Spellcasting.lua
+
 HF_UnitFrame.lua
 HF_UnitFrame.xml
 

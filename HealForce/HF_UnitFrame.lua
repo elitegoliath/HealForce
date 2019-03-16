@@ -24,6 +24,7 @@ function HF_Unit.new(unitName, parentFrame)
 
     -- Generate the unit frame.
     self.frame = CreateFrame('StatusBar', unitName .. 'UnitFrame', parentFrame, 'HF_UnitFrame');
+    self.frame.unitName = unitName;
 
     -- Set initial stats.
     self.name = unitName;
@@ -38,4 +39,8 @@ function HF_Unit.new(unitName, parentFrame)
     self.UpdateHealth = HF_UpdateHealth;
 
     return self;
+end;
+
+function HF_HealthbarClicked(frame)
+    print(frame.unitName);
 end;

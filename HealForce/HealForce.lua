@@ -1,14 +1,5 @@
 -- Init local variables.
 local _, hf = ...;
--- local TestFrame = nil;
-
--- hf.isLocked = false;
-
--- hf:RegisterEvent('GROUP_ROSTER_UPDATE');
-
--- hf:SetScript('OnEvent', function(self, event)
---     script('On Event Firing: ' .. event);
--- end);
 
 local HF_GroupCollection = {};
 
