@@ -1,13 +1,19 @@
 <Ui xsi:schemaLocation="C:\Program Files (x86)\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
-    <StatusBar name="HF_UnitFrame" minValue="0" maxValue="100" defaultValue="100" hidden="false" virtual="true">
-        <Size x="111" y="24"/>
+    <Button name="HF_UnitFrame" virtual="true" enableMouse="true" hidden="false" inherits="SecureActionButtonTemplate">
+        <Size x="120" y="28"/>
         <Anchors>
             <Anchor point="CENTER" />
         </Anchors>
-        <BarTexture file="Interface\TargetingFrame\UI-StatusBar" />
-        <BarColor r="0.3" g="0.5" b="1.0"/>
-        <Scripts>
-            <OnMouseDown>HF_HealthbarClicked(self)</OnMouseDown>
-        </Scripts>
-    </StatusBar>
+
+        <Frames>
+            <StatusBar parentKey="HealthBar" minValue="0" maxValue="100" defaultValue="100" hidden="false" virtual="true">
+                <Size x="111" y="24"/>
+                <Anchors>
+                    <Anchor point="CENTER" />
+                </Anchors>
+                <BarTexture file="Interface\TargetingFrame\UI-StatusBar" />
+                <BarColor r="0.3" g="0.5" b="1.0"/>
+            </StatusBar>
+        </Frames>
+    </Button>
 </Ui>
