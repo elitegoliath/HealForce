@@ -45,9 +45,14 @@ function HF_Unit.new(unitName, parentFrame)
 -- TODO: Put spell icon instantiation in spellcasting.
 
     -- Create initial spell buttons.
+    local spellSlot = 1;
     for i, spell in pairs(HF_SpellBook) do
-        self.spellButtons[i] = HF_SpellButton.new(spell.name, self.frame, unitName);
-        -- self.spellButtons[i].frame:SetOffset(i - 1, 0);
+        local newButton = HF_SpellButton.new(spell.name, self.frame, unitName);
+        newButton.frame:SetPoint('BOTTOMLEFT', (spellSlot - 1) * 32, 0);
+        
+        self.spellButtons[i] = newButton;
+
+        spellSlot = spellSlot + 1;
     end;
 
 

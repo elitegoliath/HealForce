@@ -1,9 +1,9 @@
 <Ui xsi:schemaLocation="C:\Program Files (x86)\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
     <Button name="HF_SpellButtonFrame" inherits="SecureActionButtonTemplate" virtual="true" enableMouse="true" hidden="false">
         <Size x="32" y="32"/>
-        <Anchors>
+        <!-- <Anchors>
             <Anchor point="BOTTOMLEFT" />
-        </Anchors>
+        </Anchors> -->
         <Attributes>
             <Attribute name="type" value="spell" />
         </Attributes>

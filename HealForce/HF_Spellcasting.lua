@@ -4,7 +4,6 @@ local _, hf = ...;
 HF_SpellBook = {};
 
 -- Gift of Naaru = Spell_Holy_HolyProtection
--- Holy Shock = Spell_Holy_SearingLight
 
 local function HF_SetSpell(spellName, iconPath)
     HF_SpellBook[spellName] = {
@@ -22,5 +21,6 @@ function HF_SetSpells()
     -- If a Holy Paladin...
     if (playerClass == 'Paladin') and (playerSpec == 1) then
         HF_SetSpell('Flash of Light', 'Interface\\ICONS\\Spell_Holy_Flashheal');
+        HF_SetSpell('Holy Shock', 'Interface\\ICONS\\Spell_Holy_SearingLight');
     end;
 end;
