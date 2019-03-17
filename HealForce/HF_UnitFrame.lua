@@ -43,15 +43,20 @@ function HF_Unit.new(unitName, parentFrame)
     -- Set class level functions.
     self.UpdateHealth = HF_UpdateHealth;
 
+    -- Map spells to spell buttons.
+    HF_SetSpells(self.frame);
+
+
+-- TODO: Put spell icon instantiation in spellcasting.
+
     -- Create initial spell buttons.
     self.frame.Spell1:SetBackdrop({
         bgFile = 'Interface\\ICONS\\Spell_Holy_Flashheal'
     });
+    self.frame.Spell1.cooldown = CreateFrame('Cooldown', 'Spell1_Cooldown', self.frame.Spell1);
+    -- self.frame.Spell1:SetNormalTexture('Interface\\ICONS\\Spell_Holy_Flashheal');
     -- self.spellButtons['Spell1'] = self.frame.Spell1:CreateTexture('Spell1_Icon', 'Icon');
     -- self.spellButtons['Spell1']:SetTexture('Interface\\ICONS\\Ability_Priest_Flashoflight');
-
-    -- Map spells to spell buttons.
-    HF_SetSpells(self.frame);
 
     return self;
 end;

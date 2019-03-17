@@ -43,6 +43,8 @@
                 <Attributes>
                     <Attribute name="type" value="spell" />
                 </Attributes>
+                <PushedTexture file="Interface\Buttons\UI-Quickslot-Depress" />
+                <HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD" />
             </Button>
         </Frames>
     </Frame>
