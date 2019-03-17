@@ -34,18 +34,6 @@
                     </StatusBar>
                 </Frames>
             </Button>
-
-            <Button parentKey="Spell1" inherits="SecureActionButtonTemplate" virtual="true" enableMouse="true" hidden="false">
-                <Size x="32" y="32"/>
-                <Anchors>
-                    <Anchor point="BOTTOMLEFT" />
-                </Anchors>
-                <Attributes>
-                    <Attribute name="type" value="spell" />
-                </Attributes>
-                <PushedTexture file="Interface\Buttons\UI-Quickslot-Depress" />
-                <HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD" />
-            </Button>
         </Frames>
     </Frame>
 </Ui>

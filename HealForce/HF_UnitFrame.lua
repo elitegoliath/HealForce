@@ -38,22 +38,27 @@ function HF_Unit.new(unitName, parentFrame)
     -- Set the frame to match.
     self.frame.HealthBar_Button.HealthBar:SetMinMaxValues(math.min(0, self.currentHealth), self.maxHealth);
     self.frame.HealthBar_Button.HealthBar:SetValue(self.currentHealth);
-    self.frame.HealthBar_Button.HealthBar:Show();
 
     -- Set class level functions.
     self.UpdateHealth = HF_UpdateHealth;
 
-    -- Map spells to spell buttons.
-    HF_SetSpells(self.frame);
-
-
 -- TODO: Put spell icon instantiation in spellcasting.
 
     -- Create initial spell buttons.
-    self.frame.Spell1:SetBackdrop({
-        bgFile = 'Interface\\ICONS\\Spell_Holy_Flashheal'
-    });
-    self.frame.Spell1.cooldown = CreateFrame('Cooldown', 'Spell1_Cooldown', self.frame.Spell1);
+    for i, spell in pairs(HF_SpellBook) do
+        self.spellButtons[i] = HF_SpellButton.new(spell.name, self.frame, unitName);
+        -- self.spellButtons[i].frame:SetOffset(i - 1, 0);
+    end;
+
+
+    -- self.frame.Spell1:SetBackdrop({
+    --     bgFile = 'Interface\\ICONS\\Spell_Holy_Flashheal'
+    -- });
+    -- self.frame.Spell1.cooldown = CreateFrame('Cooldown', 'Spell1_Cooldown', self.frame.Spell1);
+    
+    
+    
+    
     -- self.frame.Spell1:SetNormalTexture('Interface\\ICONS\\Spell_Holy_Flashheal');
     -- self.spellButtons['Spell1'] = self.frame.Spell1:CreateTexture('Spell1_Icon', 'Icon');
     -- self.spellButtons['Spell1']:SetTexture('Interface\\ICONS\\Ability_Priest_Flashoflight');
