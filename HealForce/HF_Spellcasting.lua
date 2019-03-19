@@ -6,10 +6,18 @@ HF_SpellBook = {};
 -- Gift of Naaru = Spell_Holy_HolyProtection
 
 local function HF_SetSpell(spellName, iconPath)
-    HF_SpellBook[spellName] = {
-        name = spellName;
-        iconPath = iconPath;
-    };
+
+    -- Check if the spell is in the player's spellbook by check for nil. If nil, don't add.
+
+    local name, arg2, icon = GetSpellInfo(spellName);
+    local icon = GetSpellTexture(name);
+
+    if name and icon then
+        HF_SpellBook[spellName] = {
+            name = name;
+            icon = icon;
+        };
+    end;
 end;
 
 function HF_SetSpells()
@@ -20,7 +28,8 @@ function HF_SetSpells()
 
     -- If a Holy Paladin...
     if (playerClass == 'Paladin') and (playerSpec == 1) then
-        HF_SetSpell('Flash of Light', 'Interface\\ICONS\\Spell_Holy_Flashheal');
-        HF_SetSpell('Holy Shock', 'Interface\\ICONS\\Spell_Holy_SearingLight');
+        HF_SetSpell('Flash of Light');
+        HF_SetSpell('Holy Shock');
+        HF_SetSpell('Holy Light');
     end;
 end;

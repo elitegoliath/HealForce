@@ -42,32 +42,22 @@ function HF_Unit.new(unitName, parentFrame)
     -- Set class level functions.
     self.UpdateHealth = HF_UpdateHealth;
 
--- TODO: Put spell icon instantiation in spellcasting.
-
     -- Create initial spell buttons.
     local spellSlot = 1;
     for i, spell in pairs(HF_SpellBook) do
-        local newButton = HF_SpellButton.new(spell.name, self.frame, unitName);
+
+
+        -- TODO: Use spell order class property to place them properly.
+        -- It's currently arbitrary. The slots must be defined somehow.
+
+
+        local newButton = HF_SpellButton.new(i, self.frame, unitName);
         newButton.frame:SetPoint('BOTTOMLEFT', (spellSlot - 1) * 32, 0);
         
-        self.spellButtons[i] = newButton;
+        self.spellButtons['Spell'..spellSlot] = newButton;
 
         spellSlot = spellSlot + 1;
     end;
-
-
-    -- self.frame.Spell1:SetBackdrop({
-    --     bgFile = 'Interface\\ICONS\\Spell_Holy_Flashheal'
-    -- });
-    -- self.frame.Spell1.cooldown = CreateFrame('Cooldown', 'Spell1_Cooldown', self.frame.Spell1);
-    
-    
-    
-    
-    -- self.frame.Spell1:SetNormalTexture('Interface\\ICONS\\Spell_Holy_Flashheal');
-    -- self.spellButtons['Spell1'] = self.frame.Spell1:CreateTexture('Spell1_Icon', 'Icon');
-    -- self.spellButtons['Spell1']:SetTexture('Interface\\ICONS\\Ability_Priest_Flashoflight');
-
     return self;
 end;
 

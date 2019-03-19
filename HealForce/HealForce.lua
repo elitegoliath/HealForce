@@ -21,6 +21,14 @@ local function HF_GetUnit(groupName, unitName)
     return unit;
 end;
 
+-- Register the events we care about in this mod.
+local function HF_RegisterEvents(frame)
+    frame:RegisterEvent('UNIT_HEALTH');
+    frame:RegisterEvent('UNIT_MAXHEALTH');
+    frame:RegisterEvent('SPELLS_CHANGED');
+    frame:RegisterEvent('SPELL_UPDATE_COOLDOWN');
+end;
+
 -- All of the event actions are registered here.
 local function HF_EventActions(self, event, ...)
     local arg1 = select(1, ...);
@@ -33,24 +41,40 @@ local function HF_EventActions(self, event, ...)
         if unit then
             unit:UpdateHealth();
         end;
-    elseif (event == 'PLAYER_ENTERING_WORLD') then
+    elseif (event == 'SPELLS_CHANGED') then
+        -- Change from set spells to update spells. This should trigger changes that
+        -- create or archive spell buttons based on available spells.
+
         -- Set the player's spells.
-        HF_SetSpells();
+        -- HF_SetSpells();
+
+        print('Spells changed, yo.');
+    elseif (event == 'SPELL_UPDATE_COOLDOWN') then
+        -- Show global cooldown on all spells.
+        -- Apply proper cooldown timing to anything else that has one longer than global.
+        -- Account for spells with cast times. Interuptions cancel GCD.
+        -- Instant cast spells are just GCD. Instant cast spells trigger 2 immediate event triggers.
+        
+        print('Spells on cooldown, yo.', arg1);
+    elseif (event == 'PLAYER_ENTERING_WORLD') then
+        -- Register the events the mod needs to start listening to.
+        HF_RegisterEvents(self);
+
+
+
+        -- Set the player's spells.
+        HF_SetSpells(); -- This needs to go away once spell updates work in SPELLS_CHANGED.
+
+
 
         -- Create the initial group frame containing the player.
         HF_GroupCollection['healer'] = HF_Group.new('myGroupFrame', {'player'});
     end;
 end;
 
--- Register the events we care about in this mod.
-local function HF_RegisterEvents(frame)
-    frame:RegisterEvent('PLAYER_ENTERING_WORLD');
-    frame:RegisterEvent('UNIT_HEALTH');
-    frame:RegisterEvent('UNIT_MAXHEALTH');
-    frame:SetScript('OnEvent', HF_EventActions);
-end;
-
--- Initialize the mod. Create the first frame, and establish the event listeners.
+-- Initialize the mod by listening only to the enter world event.
+-- ll other events don't matter until after this.
 function HF_HealForce_Initialize(frame)
-    HF_RegisterEvents(frame);
+    frame:RegisterEvent('PLAYER_ENTERING_WORLD');
+    frame:SetScript('OnEvent', HF_EventActions);
 end;
