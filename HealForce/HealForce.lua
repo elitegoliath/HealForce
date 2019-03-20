@@ -26,12 +26,18 @@ local function HF_RegisterEvents(frame)
     frame:RegisterEvent('UNIT_HEALTH');
     frame:RegisterEvent('UNIT_MAXHEALTH');
     frame:RegisterEvent('SPELLS_CHANGED');
-    frame:RegisterEvent('SPELL_UPDATE_COOLDOWN');
+    frame:RegisterEvent('UNIT_SPELLCAST_START');
+    frame:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED');
+    frame:RegisterEvent('UNIT_SPELLCAST_INTERRUPTED');
+    frame:RegisterEvent('UNIT_SPELLCAST_FAILED');
+    -- frame:RegisterEvent('SPELL_UPDATE_COOLDOWN');
 end;
 
 -- All of the event actions are registered here.
 local function HF_EventActions(self, event, ...)
     local arg1 = select(1, ...);
+    local arg2 = select(2, ...);
+    local arg3 = select(3, ...);
 
     -- When a player's health or maximum health is changed...
     if (event == 'UNIT_HEALTH') or (event == 'UNIT_MAXHEALTH') then
@@ -49,13 +55,22 @@ local function HF_EventActions(self, event, ...)
         -- HF_SetSpells();
 
         print('Spells changed, yo.');
+    elseif (event == 'UNIT_SPELLCAST_START') and (arg1 == 'player') then
+        HF_CastingSpell(arg3);
+    elseif (event == 'UNIT_SPELLCAST_SUCCEEDED') and (arg1 == 'player') then
+        HF_CastingSpellSuccess(arg3);
+    elseif (event == 'UNIT_SPELLCAST_INTERRUPTED' or event == 'UNIT_SPELLCAST_FAILED') and (arg1 == 'player') then
+        -- TODO: Cancel global cooldowns.
+        -- print(...);
+        HF_CancelCooldowns();
     elseif (event == 'SPELL_UPDATE_COOLDOWN') then
         -- Show global cooldown on all spells.
         -- Apply proper cooldown timing to anything else that has one longer than global.
         -- Account for spells with cast times. Interuptions cancel GCD.
         -- Instant cast spells are just GCD. Instant cast spells trigger 2 immediate event triggers.
         
-        print('Spells on cooldown, yo.', arg1);
+        -- HF_TriggerCooldowns(UnitCastingInfo('player'));
+        -- print('Spells on cooldown, yo.', UnitCastingInfo('player'));
     elseif (event == 'PLAYER_LOGIN') then
         -- Register the events the mod needs to start listening to.
         HF_RegisterEvents(self);
