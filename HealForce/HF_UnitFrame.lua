@@ -1,5 +1,5 @@
 -- Init local variables.
-local _, hf = ...;
+-- local _, hf = ...;
 
 -- Defaults for an HF_Unit class instance.
 HF_Unit = {

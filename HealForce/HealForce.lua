@@ -1,5 +1,5 @@
 -- Init local variables.
-local _, hf = ...;
+-- local _, hf = ...;
 
 local HF_GroupCollection = {};
 
@@ -56,9 +56,14 @@ local function HF_EventActions(self, event, ...)
         -- Instant cast spells are just GCD. Instant cast spells trigger 2 immediate event triggers.
         
         print('Spells on cooldown, yo.', arg1);
-    elseif (event == 'PLAYER_ENTERING_WORLD') then
+    elseif (event == 'PLAYER_LOGIN') then
         -- Register the events the mod needs to start listening to.
         HF_RegisterEvents(self);
+
+        -- Check if globals exist. If not, make the default.
+        if (savedSettings == nil) then
+            HF_CreateDefaultGlobalSettings();
+        end;
 
 
 
@@ -68,13 +73,13 @@ local function HF_EventActions(self, event, ...)
 
 
         -- Create the initial group frame containing the player.
-        HF_GroupCollection['healer'] = HF_Group.new('myGroupFrame', {'player'});
+        HF_GroupCollection['healer'] = HF_Group.new('healer', {'player'});
     end;
 end;
 
 -- Initialize the mod by listening only to the enter world event.
 -- ll other events don't matter until after this.
 function HF_HealForce_Initialize(frame)
-    frame:RegisterEvent('PLAYER_ENTERING_WORLD');
+    frame:RegisterEvent('PLAYER_LOGIN');
     frame:SetScript('OnEvent', HF_EventActions);
 end;

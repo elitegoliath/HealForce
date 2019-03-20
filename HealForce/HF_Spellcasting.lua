@@ -1,5 +1,5 @@
 -- Init local variables.
-local _, hf = ...;
+-- local _, hf = ...;
 
 HF_SpellBook = {};
 

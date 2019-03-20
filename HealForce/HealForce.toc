@@ -4,6 +4,9 @@
 ## Notes: A powerful tool for healers.
 ## Author: ArsenalLagspike
 ## DefaultState: enabled
+## SavedVariables: savedSettings
+
+HF_GlobalsHandler.lua
 
 HF_SpellButtonFrame.lua
 HF_SpellButtonFrame.xml
