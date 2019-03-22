@@ -1,6 +1,5 @@
--- Init local variables.
--- local _, hf = ...;
-
+-- This table of spells can be accessed either by Spell Name or ID.
+-- Due to the variety of ways spells need to be accessed, this is necessary.
 HF_SpellBook = {};
 local spellbookMeta = {
     __index = function(_table, _key)
@@ -24,8 +23,8 @@ local spellbookMeta = {
 };
 setmetatable(HF_SpellBook, spellbookMeta);
 
-local ButtonList = {};
-local SpellsOnCooldown = {};
+local ButtonList = {}; -- A flatter list of UnitFrame spell button references.
+local SpellsOnCooldown = {}; -- Tracks which spells were on cooldown and when.
 local cooldownsActive = false;
 local isCastingSpell = false;
 local spellBeingCast = nil; -- Used to cancel this spells cooldown and not ones with longer ones when interuptions occur.
@@ -54,9 +53,11 @@ function HF_SetSpells()
     -- TODO: Add race detection for special race buffs.
     -- TODO: Update spell buttons somehow too.
 
+    -- Clear the spellbooks and cooldowns.
     wipe(HF_SpellBook);
     wipe(SpellsOnCooldown);
 
+    -- Get the player's information.
     local playerClass = UnitClass('player');
     local playerSpec = GetSpecialization();
 
@@ -71,6 +72,7 @@ end;
 -- Used to keep track of each button for each spell.
 -- Useful for cooldown triggering.
 function HF_SetSpellButtonRef(_frame, _spellName)
+    -- If the table doesn't exist, make it.
     if not ButtonList[_spellName] then
         ButtonList[_spellName] = {};
     end;
@@ -78,9 +80,8 @@ function HF_SetSpellButtonRef(_frame, _spellName)
     table.insert(ButtonList[_spellName], _frame);
 end;
 
-
-
-
+-- Any spell with a cooldown longer than the global cooldown that is currently active
+-- will return true.
 local function HF_GetIsOnLongCooldown(_spellName)
     local cd = SpellsOnCooldown[_spellName];
     local isOnLongCooldown = false;
@@ -93,12 +94,15 @@ local function HF_GetIsOnLongCooldown(_spellName)
     return isOnLongCooldown;
 end;
 
-
+-- Begins cooldowns. Takes into consideration anything already on a Long Cooldown.
+-- Also factors in if the spell just cast has a Long Cooldown.
+-- All other spells get a global cooldown.
 local function HF_StartCooldowns(_spellOnCooldown)
     local spellName = HF_SpellBook[_spellOnCooldown].name;
     local _, globalCD = GetSpellBaseCooldown(_spellOnCooldown);
     globalCooldown = globalCD / 1000;
 
+    -- Iterate over the categories of Spell Buttons on UnitFrames.
     for i, spellCat in pairs(ButtonList) do
         local spellCooldown = GetSpellBaseCooldown(i);
         local startTime, _, onCooldown = GetSpellCooldown(i);
@@ -107,6 +111,8 @@ local function HF_StartCooldowns(_spellOnCooldown)
             spellCooldown = spellCooldown / 1000;
         end;
 
+        -- If the current category is the one that was just cast...
+        -- Consider if it has a Long Cooldown or to just use GCD.
         if i == spellName then
             -- Because blizzard can't give me this info in a nice easy to get way...
             local trueCooldown = globalCooldown;
@@ -123,14 +129,7 @@ local function HF_StartCooldowns(_spellOnCooldown)
                 spellButton.cooldown:SetCooldown(startTime, trueCooldown);
             end;
         else
-            -- local cd = SpellsOnCooldown[i];
-            -- local updateCd = true;
-
-            -- if (cd and cd.start > 0) then
-            --     local timeLeft = (cd.start + cd.duration) - startTime;
-            --     if (timeLeft > globalCooldown) then updateCd = false end;
-            -- end;
-
+            -- Otherwise just throw on the GCD unless it's already on a Long Cooldown.
             local isOnLongCooldown = HF_GetIsOnLongCooldown(i);
 
             if not isOnLongCooldown then
@@ -143,7 +142,8 @@ local function HF_StartCooldowns(_spellOnCooldown)
     end;
 end;
 
-
+-- Interruptions happen, and when they do, any cooldowns activated by the spell...
+-- global or otherwise, need to be cancelled.
 local function HF_InteruptCooldowns()
     local currentSpellName = GetSpellInfo(spellBeingCast);
     if currentSpellName and SpellsOnCooldown[currentSpellName] then
@@ -160,31 +160,31 @@ local function HF_InteruptCooldowns()
     end;
 end;
 
-
+-- If casting a non-instant cast spell...
 function HF_CastingSpell(_spellID)
     isCastingSpell = true;
     cooldownsActive = true;
     spellBeingCast = _spellID;
 
     HF_StartCooldowns(_spellID);
-    -- print('Is casting '.._spellID);
 end;
 
+-- When a spell succeeds in being cast, whether it was an instant cast or
+-- a spell with a cast time, it needs to be handled.
 function HF_CastingSpellSuccess(_spellID)
     cooldownsActive = true;
     
+    -- If the spell that succeeded was actually an instant cast spell...
     if not isCastingSpell then
-        -- TODO: Set cooldown of spell on the spell itself in all slots.
-        -- TODO: Set global cooldown on all other spells.
         HF_StartCooldowns(_spellID);
-        -- print('Instant cast spell has been cast: '.._spellID);
     else
+        -- Otherwise, reset the flags and variables we track for spellcasting.
         isCastingSpell = false;
         spellBeingCast = nil;
-        -- print(_spellID..(' succeeded.'));
     end;
 end;
 
+-- When a spell has been interrupted, cancel associated cooldowns.
 function HF_CancelCooldowns()
     if cooldownsActive and isCastingSpell then
         cooldownsActive = false;

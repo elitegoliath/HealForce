@@ -1,11 +1,7 @@
--- Init local variables.
--- local _, hf = ...;
-
 -- Defaults for an HF_Unit class instance.
 HF_Unit = {
     frame = nil;
     name = nil;
-    -- spellButtons = {};
     maxHealth = 100;
     currentHealth = 100;
 };
@@ -42,14 +38,16 @@ function HF_Unit.new(_unitName, _parentFrame)
     -- Set class level functions.
     self.UpdateHealth = HF_UpdateHealth;
 
-    -- Create initial spell buttons.\
+    -- Create initial spell buttons.
     for i, spell in pairs(HF_SpellBook) do
         local newButton = HF_SpellButton.new(spell.name, self.frame, _unitName);
         newButton.frame:SetPoint('BOTTOMLEFT', (i - 1) * 32, 0);
     end;
+
     return self;
 end;
 
+-- When the healthbar is clicked, cast it's associated spell.
 function HF_HealthbarClicked(_frame)
     print(_frame.unitName);
 end;

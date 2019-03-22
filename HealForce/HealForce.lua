@@ -1,6 +1,3 @@
--- Init local variables.
--- local _, hf = ...;
-
 local HF_GroupCollection = {};
 
 -- Returns a group class instance or nil.
@@ -30,7 +27,6 @@ local function HF_RegisterEvents(frame)
     frame:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED');
     frame:RegisterEvent('UNIT_SPELLCAST_INTERRUPTED');
     frame:RegisterEvent('UNIT_SPELLCAST_FAILED');
-    -- frame:RegisterEvent('SPELL_UPDATE_COOLDOWN');
 end;
 
 -- All of the event actions are registered here.
@@ -60,17 +56,7 @@ local function HF_EventActions(self, event, ...)
     elseif (event == 'UNIT_SPELLCAST_SUCCEEDED') and (arg1 == 'player') then
         HF_CastingSpellSuccess(arg3);
     elseif (event == 'UNIT_SPELLCAST_INTERRUPTED' or event == 'UNIT_SPELLCAST_FAILED') and (arg1 == 'player') then
-        -- TODO: Cancel global cooldowns.
-        -- print(...);
         HF_CancelCooldowns();
-    elseif (event == 'SPELL_UPDATE_COOLDOWN') then
-        -- Show global cooldown on all spells.
-        -- Apply proper cooldown timing to anything else that has one longer than global.
-        -- Account for spells with cast times. Interuptions cancel GCD.
-        -- Instant cast spells are just GCD. Instant cast spells trigger 2 immediate event triggers.
-        
-        -- HF_TriggerCooldowns(UnitCastingInfo('player'));
-        -- print('Spells on cooldown, yo.', UnitCastingInfo('player'));
     elseif (event == 'PLAYER_LOGIN') then
         -- Register the events the mod needs to start listening to.
         HF_RegisterEvents(self);

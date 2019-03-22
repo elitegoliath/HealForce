@@ -1,6 +1,3 @@
--- Init local variables.
--- local _, hf = ...;
-
 -- Defaults for an HF_Group class instance.
 HF_Group = {
     frame = nil;

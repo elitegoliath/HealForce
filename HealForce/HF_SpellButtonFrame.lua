@@ -1,6 +1,3 @@
--- Init local variables.
--- local _, hf = ...;
-
 -- Defaults for an HF_SpellButton class instance.
 HF_SpellButton = {
     frame = nil;
@@ -21,6 +18,8 @@ function HF_SpellButton.new(_spellName, _parentFrame, _target)
 
     -- Generate the spell button frame.
     self.frame = CreateFrame('Button', _spellName .. '_SpellButtonFrame', _parentFrame, 'HF_SpellButtonFrame');
+    
+    -- Store the newly created frame's reference for spellcasting concerns.
     HF_SetSpellButtonRef(self.frame, _spellName);
 
     -- Set the icon.
