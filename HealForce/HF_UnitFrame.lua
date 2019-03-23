@@ -9,6 +9,8 @@ HF_Unit = {
 };
 HF_Unit.__index = HF_Unit;
 
+local buttonSize = 32; -- Square size in pixels.
+
 -- Update health for an HF_Unit class instance.
 local function UpdateHealth(_self)
     _self.maxHealth = UnitHealthMax(_self.name);
@@ -16,11 +18,13 @@ local function UpdateHealth(_self)
     _self.frame.HealthBar_Button.HealthBar:SetMinMaxValues(math.min(0, _self.currentHealth), _self.maxHealth);
     _self.frame.HealthBar_Button.HealthBar:SetValue(_self.currentHealth);
     
+    -- If there are incoming heals, it's status bar needs to be updated to match.
     if _self.hasIncomingHeals then
         _self:UpdateHealPrediction();
     end;
 end;
 
+-- Manipulates the heal-prediction bar on the HF_Unit class instance.
 local function UpdateHealPrediction(_self)
     local incomingHealAmount = UnitGetIncomingHeals(_self.name);
 
@@ -32,6 +36,15 @@ local function UpdateHealPrediction(_self)
         _self.hasIncomingHeals = false;
         _self.frame.HealthBar_Button.HealPredictBar:SetValue(0);
     end;
+end;
+
+local function CreateSpellSlot(_self, _slotNumber, _spellName, _target)
+    local newButton = HF_SpellButton.new(_spellName, _self.frame, _target);
+    newButton.frame:SetPoint('BOTTOMLEFT', (_slotNumber - 1) * buttonSize, 0);
+
+    -- When a spell slot is created, it must be able to be re-used.
+    -- Register it in the table for this purpose only.
+    table.insert(_self.spellSlots, newButton);
 end;
 
 -- Constructor for the HF_Unit class.
@@ -59,16 +72,7 @@ function HF_Unit.new(_unitName, _parentFrame)
     -- Set class level functions.
     self.UpdateHealth = UpdateHealth;
     self.UpdateHealPrediction = UpdateHealPrediction;
-
-    -- Create initial spell buttons.
-    for i, spell in pairs(HF_SpellBook) do
-        local newButton = HF_SpellButton.new(spell.name, self.frame, _unitName);
-        newButton.frame:SetPoint('BOTTOMLEFT', (i - 1) * 32, 0);
-
-        -- When a spell slot is created, it must be able to be re-used.
-        -- Register it in the table for this purpose only.
-        table.insert(self.spellSlots, newButton);
-    end;
+    self.CreateSpellSlot = CreateSpellSlot;
 
     return self;
 end;

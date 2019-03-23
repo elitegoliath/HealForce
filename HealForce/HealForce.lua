@@ -20,7 +20,7 @@ local function EventActions(_self, _event, ...)
     local arg3 = select(3, ...);
 
     -- When a player's health or maximum health is changed...
-    if (_event == 'UNIT_HEALTH') or (v == 'UNIT_MAXHEALTH') then
+    if (_event == 'UNIT_HEALTH') or (_event == 'UNIT_MAXHEALTH') then
         local unitName = arg1;
         local unit = HF_UnitCollection[unitName];
 
@@ -35,13 +35,8 @@ local function EventActions(_self, _event, ...)
             unit:UpdateHealPrediction();
         end;
     elseif (_event == 'SPELLS_CHANGED') then
-        -- Change from set spells to update spells. This should trigger changes that
-        -- create or archive spell buttons based on available spells.
-
-        -- Set the player's spells.
-        -- HF_SetSpells();
-
-        print('Spells changed, yo.');
+        -- Set or re-set the player's list of regsitered spells.
+        HF_SetSpells();
     elseif (_event == 'UNIT_SPELLCAST_START') and (arg1 == 'player') then
         HF_CastingSpell(arg3);
     elseif (_event == 'UNIT_SPELLCAST_SUCCEEDED') and (arg1 == 'player') then
@@ -56,11 +51,6 @@ local function EventActions(_self, _event, ...)
         if (savedSettings == nil) then
             HF_CreateDefaultGlobalSettings();
         end;
-
-
-
-        -- Set the player's spells.
-        HF_SetSpells(); -- This needs to go away once spell updates work in SPELLS_CHANGED.
 
 
 
