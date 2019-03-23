@@ -27,7 +27,13 @@ function HF_Group.new(_frameName, _unitNames)
     
     -- Create all the units for the new frame.
     for i, unitName in pairs(_unitNames) do
-        self.units[unitName] = HF_Unit.new(unitName, self.frame);
+        local newUnit = HF_Unit.new(unitName, self.frame);
+
+        -- Store the new unit in it's parent container.
+        self.units[unitName] = newUnit;
+
+        -- Also store a reference to the new unit in a flat table list.
+        HF_UnitCollection[unitName] = newUnit;
     end;
 
     return self;

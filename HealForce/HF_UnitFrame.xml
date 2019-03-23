@@ -32,6 +32,15 @@
                         <BarTexture file="Interface\TargetingFrame\UI-StatusBar" />
                         <BarColor r="0.3" g="0.5" b="1.0"/>
                     </StatusBar>
+
+                    <StatusBar parentKey="HealPredictBar" minValue="0" maxValue="100" defaultValue="0" hidden="false" virtual="true">
+                        <Size x="128" y="32"/>
+                        <Anchors>
+                            <Anchor point="CENTER" />
+                        </Anchors>
+                        <BarTexture file="Interface\TargetingFrame\UI-StatusBar" />
+                        <BarColor r="0.3" g="1" b="0.3" a="0.3"/>
+                    </StatusBar>
                 </Frames>
             </Button>
         </Frames>

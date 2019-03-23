@@ -4,15 +4,34 @@ HF_Unit = {
     name = nil;
     maxHealth = 100;
     currentHealth = 100;
+    spellSlots = {};
+    hasIncomingHeals = false;
 };
 HF_Unit.__index = HF_Unit;
 
 -- Update health for an HF_Unit class instance.
-local function HF_UpdateHealth(_self)
+local function UpdateHealth(_self)
     _self.maxHealth = UnitHealthMax(_self.name);
     _self.currentHealth = UnitHealth(_self.name);
     _self.frame.HealthBar_Button.HealthBar:SetMinMaxValues(math.min(0, _self.currentHealth), _self.maxHealth);
     _self.frame.HealthBar_Button.HealthBar:SetValue(_self.currentHealth);
+    
+    if _self.hasIncomingHeals then
+        _self:UpdateHealPrediction();
+    end;
+end;
+
+local function UpdateHealPrediction(_self)
+    local incomingHealAmount = UnitGetIncomingHeals(_self.name);
+
+    if (incomingHealAmount > 0) then
+        _self.hasIncomingHeals = true;
+        _self.frame.HealthBar_Button.HealPredictBar:SetMinMaxValues(math.min(0, _self.currentHealth), _self.maxHealth);
+        _self.frame.HealthBar_Button.HealPredictBar:SetValue(_self.currentHealth + incomingHealAmount);
+    else
+        _self.hasIncomingHeals = false;
+        _self.frame.HealthBar_Button.HealPredictBar:SetValue(0);
+    end;
 end;
 
 -- Constructor for the HF_Unit class.
@@ -34,14 +53,21 @@ function HF_Unit.new(_unitName, _parentFrame)
     -- Set the frame to match.
     self.frame.HealthBar_Button.HealthBar:SetMinMaxValues(math.min(0, self.currentHealth), self.maxHealth);
     self.frame.HealthBar_Button.HealthBar:SetValue(self.currentHealth);
+    self.frame.HealthBar_Button.HealPredictBar:SetMinMaxValues(math.min(0, self.currentHealth), self.maxHealth);
+    self.frame.HealthBar_Button.HealPredictBar:SetValue(0);
 
     -- Set class level functions.
-    self.UpdateHealth = HF_UpdateHealth;
+    self.UpdateHealth = UpdateHealth;
+    self.UpdateHealPrediction = UpdateHealPrediction;
 
     -- Create initial spell buttons.
     for i, spell in pairs(HF_SpellBook) do
         local newButton = HF_SpellButton.new(spell.name, self.frame, _unitName);
         newButton.frame:SetPoint('BOTTOMLEFT', (i - 1) * 32, 0);
+
+        -- When a spell slot is created, it must be able to be re-used.
+        -- Register it in the table for this purpose only.
+        table.insert(self.spellSlots, newButton);
     end;
 
     return self;

@@ -1,49 +1,40 @@
-local HF_GroupCollection = {};
-
--- Returns a group class instance or nil.
-local function HF_GetGroupCollection(groupName)
-    return HF_GroupCollection[groupName];
-end;
-
--- Returns a unit class instance or nil.
-local function HF_GetUnit(groupName, unitName)
-    local group = HF_GetGroupCollection(groupName);
-    local unit = nil;
-
-    -- If the group exists, find the unit.
-    if group then 
-        unit = group.units[unitName];
-    end;
-
-    return unit;
-end;
+HF_GroupCollection = {};
+HF_UnitCollection = {};
 
 -- Register the events we care about in this mod.
-local function HF_RegisterEvents(frame)
-    frame:RegisterEvent('UNIT_HEALTH');
-    frame:RegisterEvent('UNIT_MAXHEALTH');
-    frame:RegisterEvent('SPELLS_CHANGED');
-    frame:RegisterEvent('UNIT_SPELLCAST_START');
-    frame:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED');
-    frame:RegisterEvent('UNIT_SPELLCAST_INTERRUPTED');
-    frame:RegisterEvent('UNIT_SPELLCAST_FAILED');
+local function RegisterEvents(_frame)
+    _frame:RegisterEvent('UNIT_HEALTH');
+    _frame:RegisterEvent('UNIT_MAXHEALTH');
+    _frame:RegisterEvent('UNIT_HEAL_PREDICTION');
+    _frame:RegisterEvent('SPELLS_CHANGED');
+    _frame:RegisterEvent('UNIT_SPELLCAST_START');
+    _frame:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED');
+    _frame:RegisterEvent('UNIT_SPELLCAST_INTERRUPTED');
+    _frame:RegisterEvent('UNIT_SPELLCAST_FAILED');
 end;
 
 -- All of the event actions are registered here.
-local function HF_EventActions(self, event, ...)
+local function EventActions(_self, _event, ...)
     local arg1 = select(1, ...);
     local arg2 = select(2, ...);
     local arg3 = select(3, ...);
 
     -- When a player's health or maximum health is changed...
-    if (event == 'UNIT_HEALTH') or (event == 'UNIT_MAXHEALTH') then
+    if (_event == 'UNIT_HEALTH') or (v == 'UNIT_MAXHEALTH') then
         local unitName = arg1;
-        local unit = HF_GetUnit('healer', unitName);
+        local unit = HF_UnitCollection[unitName];
 
         if unit then
             unit:UpdateHealth();
         end;
-    elseif (event == 'SPELLS_CHANGED') then
+    elseif (_event == 'UNIT_HEAL_PREDICTION') then
+        local unitName = arg1;
+        local unit = HF_UnitCollection[unitName];
+
+        if unit then
+            unit:UpdateHealPrediction();
+        end;
+    elseif (_event == 'SPELLS_CHANGED') then
         -- Change from set spells to update spells. This should trigger changes that
         -- create or archive spell buttons based on available spells.
 
@@ -51,15 +42,15 @@ local function HF_EventActions(self, event, ...)
         -- HF_SetSpells();
 
         print('Spells changed, yo.');
-    elseif (event == 'UNIT_SPELLCAST_START') and (arg1 == 'player') then
+    elseif (_event == 'UNIT_SPELLCAST_START') and (arg1 == 'player') then
         HF_CastingSpell(arg3);
-    elseif (event == 'UNIT_SPELLCAST_SUCCEEDED') and (arg1 == 'player') then
+    elseif (_event == 'UNIT_SPELLCAST_SUCCEEDED') and (arg1 == 'player') then
         HF_CastingSpellSuccess(arg3);
-    elseif (event == 'UNIT_SPELLCAST_INTERRUPTED' or event == 'UNIT_SPELLCAST_FAILED') and (arg1 == 'player') then
+    elseif (_event == 'UNIT_SPELLCAST_INTERRUPTED' or _event == 'UNIT_SPELLCAST_FAILED') and (arg1 == 'player') then
         HF_CancelCooldowns();
-    elseif (event == 'PLAYER_LOGIN') then
+    elseif (_event == 'PLAYER_LOGIN') then
         -- Register the events the mod needs to start listening to.
-        HF_RegisterEvents(self);
+        RegisterEvents(_self);
 
         -- Check if globals exist. If not, make the default.
         if (savedSettings == nil) then
@@ -80,7 +71,7 @@ end;
 
 -- Initialize the mod by listening only to the enter world event.
 -- ll other events don't matter until after this.
-function HF_HealForce_Initialize(frame)
-    frame:RegisterEvent('PLAYER_LOGIN');
-    frame:SetScript('OnEvent', HF_EventActions);
+function HF_HealForce_Initialize(_frame)
+    _frame:RegisterEvent('PLAYER_LOGIN');
+    _frame:SetScript('OnEvent', EventActions);
 end;
