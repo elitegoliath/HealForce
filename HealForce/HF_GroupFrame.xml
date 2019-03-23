@@ -11,16 +11,25 @@
 
         <Frames>
             <Frame name="DragFrame" hidden="false" virtual="true" enableMouse="true">
-                <Size x="100" y="100" />
+                <Size x="100" y="20" />
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPLEFT" />
+                    <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" />
                 </Anchors>
                 <Layers>
                     <Layer level="BACKGROUND">
-                    <Texture>
-                        <Size x="100" y="100" />
-                        <Color r="1" g="0" b="0" a="0.1"/>
-                    </Texture>
+                        <Texture>
+                            <Color r="1" g="0" b="0" a="0.1"/>
+                        </Texture>
+                    </Layer level="OVERLAY">
+                        <FontString parentKey="groupName" inherits="GameFontNormal">
+                            <Anchors>
+                                <Anchor point="CENTER">
+                                    <!-- <Offset x="0" y="-18"/> -->
+                                </Anchor>
+                            </Anchors>
+                        </FontString>
+                    <Layer>
+
                     </Layer>
                 </Layers>
                 <Scripts>

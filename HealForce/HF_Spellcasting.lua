@@ -88,7 +88,6 @@ end;
 -- Resets the entire spell list for the character.
 function HF_SetSpells()
     -- TODO: Add race detection for special race buffs.
-    -- TODO: Update spell buttons somehow too.
 
     -- Clear the spellbooks and cooldowns.
     wipe(HF_SpellBook);

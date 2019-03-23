@@ -9,7 +9,7 @@ HF_Unit = {
 };
 HF_Unit.__index = HF_Unit;
 
-local buttonSize = 32; -- Square size in pixels.
+local BUTTON_SIZE = 32; -- Square size in pixels.
 
 -- Update health for an HF_Unit class instance.
 local function UpdateHealth(_self)
@@ -40,7 +40,7 @@ end;
 
 local function CreateSpellSlot(_self, _slotNumber, _spellName, _target)
     local newButton = HF_SpellButton.new(_spellName, _self.frame, _target);
-    newButton.frame:SetPoint('BOTTOMLEFT', (_slotNumber - 1) * buttonSize, 0);
+    newButton.frame:SetPoint('BOTTOMLEFT', (_slotNumber - 1) * BUTTON_SIZE, 0);
 
     -- When a spell slot is created, it must be able to be re-used.
     -- Register it in the table for this purpose only.

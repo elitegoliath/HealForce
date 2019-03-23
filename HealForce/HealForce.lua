@@ -1,16 +1,31 @@
 HF_GroupCollection = {};
 HF_UnitCollection = {};
 
+local GROUP_ME = 'Me';
+
 -- Register the events we care about in this mod.
 local function RegisterEvents(_frame)
     _frame:RegisterEvent('UNIT_HEALTH');
     _frame:RegisterEvent('UNIT_MAXHEALTH');
     _frame:RegisterEvent('UNIT_HEAL_PREDICTION');
     _frame:RegisterEvent('SPELLS_CHANGED');
+    _frame:RegisterEvent('GROUP_ROSTER_UPDATE');
     _frame:RegisterEvent('UNIT_SPELLCAST_START');
     _frame:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED');
     _frame:RegisterEvent('UNIT_SPELLCAST_INTERRUPTED');
     _frame:RegisterEvent('UNIT_SPELLCAST_FAILED');
+end;
+
+local function UpdateRoster()
+    if IsInRaid('player') then
+        -- Do raid things.
+    elseif IsInGroup('player') then
+        -- Do party things.
+        -- print(UnitGroupRolesAssigned('player'));
+    else
+        -- Is by one's lonely self.
+        HF_GroupCollection[GROUP_ME] = HF_Group.new(GROUP_ME, {'player'});
+    end;
 end;
 
 -- All of the event actions are registered here.
@@ -37,6 +52,8 @@ local function EventActions(_self, _event, ...)
     elseif (_event == 'SPELLS_CHANGED') then
         -- Set or re-set the player's list of regsitered spells.
         HF_SetSpells();
+    elseif (_event == 'GROUP_ROSTER_UPDATE') then
+        print('Update Roster.');
     elseif (_event == 'UNIT_SPELLCAST_START') and (arg1 == 'player') then
         HF_CastingSpell(arg3);
     elseif (_event == 'UNIT_SPELLCAST_SUCCEEDED') and (arg1 == 'player') then
@@ -52,10 +69,8 @@ local function EventActions(_self, _event, ...)
             HF_CreateDefaultGlobalSettings();
         end;
 
-
-
-        -- Create the initial group frame containing the player.
-        HF_GroupCollection['healer'] = HF_Group.new('healer', {'player'});
+        -- Initialize the group, whatever that is currently comprised of.
+        UpdateRoster();
     end;
 end;
 
