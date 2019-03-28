@@ -15,6 +15,7 @@ function HF_Group.new(_frameName, _unitNames)
     self.frame.name = _frameName;
     self.frame:SetSize(300, 300);
     self.frame:SetPoint('CENTER', UIParent, 'CENTER');
+    self.frame.dragBar.groupName:SetText(_frameName);
     
     -- Check to see if this frame has a global setting.
     local groupSettings = HF_GetGroupFrame(_frameName);

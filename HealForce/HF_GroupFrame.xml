@@ -10,7 +10,7 @@
         </Layers>
 
         <Frames>
-            <Frame name="DragFrame" hidden="false" virtual="true" enableMouse="true">
+            <Frame name="DragFrame" parentKey="dragBar" hidden="false" virtual="true" enableMouse="true">
                 <Size x="100" y="20" />
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" />
@@ -20,7 +20,8 @@
                         <Texture>
                             <Color r="1" g="0" b="0" a="0.1"/>
                         </Texture>
-                    </Layer level="OVERLAY">
+                    </Layer>
+                    <Layer level="OVERLAY">
                         <FontString parentKey="groupName" inherits="GameFontNormal">
                             <Anchors>
                                 <Anchor point="CENTER">
@@ -28,8 +29,6 @@
                                 </Anchor>
                             </Anchors>
                         </FontString>
-                    <Layer>
-
                     </Layer>
                 </Layers>
                 <Scripts>

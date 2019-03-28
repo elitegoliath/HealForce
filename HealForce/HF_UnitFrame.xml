@@ -31,6 +31,18 @@
                         </Anchors>
                         <BarTexture file="Interface\TargetingFrame\UI-StatusBar" />
                         <BarColor r="0.3" g="0.5" b="1.0"/>
+
+                        <Layers>
+                            <Layer level="OVERLAY">
+                                <FontString parentKey="unitName" inherits="GameFontNormal">
+                                    <Anchors>
+                                        <Anchor point="TOP">
+                                            <Offset x="0" y="-1"/>
+                                        </Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
                     </StatusBar>
 
                     <StatusBar parentKey="HealPredictBar" minValue="0" maxValue="100" defaultValue="0" hidden="false" virtual="true">

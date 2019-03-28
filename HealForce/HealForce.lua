@@ -5,8 +5,9 @@ local GROUP_ME = 'Me';
 
 -- Register the events we care about in this mod.
 local function RegisterEvents(_frame)
-    _frame:RegisterEvent('UNIT_HEALTH');
+    _frame:RegisterEvent('UNIT_HEALTH_FREQUENT');
     _frame:RegisterEvent('UNIT_MAXHEALTH');
+    -- _frame:RegisterEvent('PLAYER_REGEN_DISABLED');
     _frame:RegisterEvent('UNIT_HEAL_PREDICTION');
     _frame:RegisterEvent('SPELLS_CHANGED');
     _frame:RegisterEvent('GROUP_ROSTER_UPDATE');
@@ -35,13 +36,19 @@ local function EventActions(_self, _event, ...)
     local arg3 = select(3, ...);
 
     -- When a player's health or maximum health is changed...
-    if (_event == 'UNIT_HEALTH') or (_event == 'UNIT_MAXHEALTH') then
+    if (_event == 'UNIT_HEALTH_FREQUENT') or (_event == 'UNIT_MAXHEALTH') then
         local unitName = arg1;
         local unit = HF_UnitCollection[unitName];
 
         if unit then
             unit:UpdateHealth();
         end;
+    -- elseif (_event == 'PLAYER_REGEN_DISABLED') then
+    --     local unit = HF_UnitCollection['player'];
+
+    --     if unit then
+    --         unit:UpdateHealth();
+    --     end;
     elseif (_event == 'UNIT_HEAL_PREDICTION') then
         local unitName = arg1;
         local unit = HF_UnitCollection[unitName];

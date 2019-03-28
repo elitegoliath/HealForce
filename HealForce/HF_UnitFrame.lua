@@ -13,10 +13,10 @@ local BUTTON_SIZE = 32; -- Square size in pixels.
 
 -- Update health for an HF_Unit class instance.
 local function UpdateHealth(_self)
-    _self.maxHealth = UnitHealthMax(_self.name);
-    _self.currentHealth = UnitHealth(_self.name);
-    _self.frame.HealthBar_Button.HealthBar:SetMinMaxValues(math.min(0, _self.currentHealth), _self.maxHealth);
-    _self.frame.HealthBar_Button.HealthBar:SetValue(_self.currentHealth);
+    local maxHealth = UnitHealthMax(_self.name);
+    local currentHealth = UnitHealth(_self.name);
+    _self.frame.HealthBar_Button.HealthBar:SetMinMaxValues(0, maxHealth);
+    _self.frame.HealthBar_Button.HealthBar:SetValue(currentHealth);
     
     -- If there are incoming heals, it's status bar needs to be updated to match.
     if _self.hasIncomingHeals then
@@ -50,23 +50,25 @@ end;
 -- Constructor for the HF_Unit class.
 function HF_Unit.new(_unitName, _parentFrame)
     local self = setmetatable({}, HF_Unit);
+    local characterName = GetUnitName(_unitName, false);
 
     -- Generate the unit frame.
     self.frame = CreateFrame('Frame', _unitName .. 'UnitFrame', _parentFrame, 'HF_UnitFrame');
     self.frame.unitName = _unitName;
+    self.frame.HealthBar_Button.HealthBar.unitName:SetText(characterName);
 
     -- Initialize healthbar spell.
     self.frame.HealthBar_Button:SetAttribute('spell', 'Flash of Light');
 
     -- Set initial stats.
     self.name = _unitName;
-    self.maxHealth = UnitHealthMax(_unitName);
-    self.currentHealth = UnitHealth(_unitName);
 
     -- Set the frame to match.
-    self.frame.HealthBar_Button.HealthBar:SetMinMaxValues(math.min(0, self.currentHealth), self.maxHealth);
-    self.frame.HealthBar_Button.HealthBar:SetValue(self.currentHealth);
-    self.frame.HealthBar_Button.HealPredictBar:SetMinMaxValues(math.min(0, self.currentHealth), self.maxHealth);
+    local maxHealth = UnitHealthMax(_unitName);
+    local currentHealth = UnitHealth(_unitName);
+    self.frame.HealthBar_Button.HealthBar:SetMinMaxValues(0, maxHealth);
+    self.frame.HealthBar_Button.HealthBar:SetValue(currentHealth);
+    self.frame.HealthBar_Button.HealPredictBar:SetMinMaxValues(0, maxHealth);
     self.frame.HealthBar_Button.HealPredictBar:SetValue(0);
 
     -- Set class level functions.
