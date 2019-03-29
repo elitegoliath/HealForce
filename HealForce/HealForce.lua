@@ -7,9 +7,10 @@ local GROUP_ME = 'Me';
 local function RegisterEvents(_frame)
     _frame:RegisterEvent('UNIT_HEALTH_FREQUENT');
     _frame:RegisterEvent('UNIT_MAXHEALTH');
-    -- _frame:RegisterEvent('PLAYER_REGEN_DISABLED');
     _frame:RegisterEvent('UNIT_HEAL_PREDICTION');
     _frame:RegisterEvent('SPELLS_CHANGED');
+    _frame:RegisterEvent('SPELL_ACTIVATION_OVERLAY_GLOW_SHOW');
+    _frame:RegisterEvent('SPELL_ACTIVATION_OVERLAY_GLOW_HIDE');
     _frame:RegisterEvent('GROUP_ROSTER_UPDATE');
     _frame:RegisterEvent('UNIT_SPELLCAST_START');
     _frame:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED');
@@ -43,12 +44,10 @@ local function EventActions(_self, _event, ...)
         if unit then
             unit:UpdateHealth();
         end;
-    -- elseif (_event == 'PLAYER_REGEN_DISABLED') then
-    --     local unit = HF_UnitCollection['player'];
-
-    --     if unit then
-    --         unit:UpdateHealth();
-    --     end;
+    elseif (_event == 'SPELL_ACTIVATION_OVERLAY_GLOW_SHOW') then
+        HF_ShowSpellProc(HF_SpellBook[arg1]);
+    elseif (_event == 'SPELL_ACTIVATION_OVERLAY_GLOW_HIDE') then
+        HF_HideSpellProc(HF_SpellBook[arg1]);
     elseif (_event == 'UNIT_HEAL_PREDICTION') then
         local unitName = arg1;
         local unit = HF_UnitCollection[unitName];

@@ -29,9 +29,11 @@ local function UpdateHealPrediction(_self)
     local incomingHealAmount = UnitGetIncomingHeals(_self.name);
 
     if (incomingHealAmount > 0) then
+        local maxHealth = UnitHealthMax(_self.name);
+        local currentHealth = UnitHealth(_self.name);
         _self.hasIncomingHeals = true;
-        _self.frame.HealthBar_Button.HealPredictBar:SetMinMaxValues(math.min(0, _self.currentHealth), _self.maxHealth);
-        _self.frame.HealthBar_Button.HealPredictBar:SetValue(_self.currentHealth + incomingHealAmount);
+        _self.frame.HealthBar_Button.HealPredictBar:SetMinMaxValues(0, maxHealth);
+        _self.frame.HealthBar_Button.HealPredictBar:SetValue(currentHealth + incomingHealAmount);
     else
         _self.hasIncomingHeals = false;
         _self.frame.HealthBar_Button.HealPredictBar:SetValue(0);

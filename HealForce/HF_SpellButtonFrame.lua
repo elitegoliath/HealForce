@@ -8,6 +8,7 @@ HF_SpellButton.__index = HF_SpellButton;
 
 -- Effectively clears the slot for re-use but maintaines the reference to it's frame.
 local function ClearSlot(_self)
+    _self:HideProc();
     _self.frame:Hide();
     _self.spellName = nil;
     _self.target = nil;
@@ -34,9 +35,6 @@ function HF_SpellButton.new(_spellName, _parentFrame, _target)
 
     -- Generate the spell button frame.
     self.frame = CreateFrame('Button', _spellName .. '_SpellButtonFrame', _parentFrame, 'HF_SpellButtonFrame');
-    
-    -- Store the newly created frame's reference for spellcasting concerns.
-    HF_SetSpellButtonRef(self.frame, _spellName);
 
     -- Set the icon.
     self.frame.icon:SetTexture(HF_SpellBook[_spellName].icon);
@@ -48,6 +46,9 @@ function HF_SpellButton.new(_spellName, _parentFrame, _target)
     -- Set class level functions.
     self.ClearSlot = ClearSlot;
     self.UpdateSlot = UpdateSlot;
+
+    -- Store the newly created frame's reference for spellcasting concerns.
+    HF_SetSpellButtonRef(self.frame, _spellName);
 
     return self;
 end;

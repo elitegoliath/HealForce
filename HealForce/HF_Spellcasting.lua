@@ -23,12 +23,33 @@ local spellbookMeta = {
 };
 setmetatable(HF_SpellBook, spellbookMeta);
 
-local ButtonList = {}; -- A flatter list of UnitFrame spell button references.
+local SpellSlotList = {}; -- A flatter list of UnitFrame spell button references.
 local SpellsOnCooldown = {}; -- Tracks which spells were on cooldown and when.
+local SpellsWithCharges = {}; -- There are extra concerns with spells that have charges.
 local cooldownsActive = false;
 local isCastingSpell = false;
 local spellBeingCast = nil; -- Used to cancel this spells cooldown and not ones with longer ones when interuptions occur.
 local globalCooldown = 1.5;
+
+function HF_ShowSpellProc(_spell)
+    if (_spell) and (_spell.name) then
+        local spellCat = SpellSlotList[_spell.name];
+
+        for i, slot in pairs(spellCat) do
+            ActionButton_ShowOverlayGlow(slot);
+        end;
+    end;
+end;
+
+function HF_HideSpellProc(_spell)
+    if (_spell) and (_spell.name) then
+        local spellCat = SpellSlotList[_spell.name];
+
+        for i, slot in pairs(spellCat) do
+            ActionButton_HideOverlayGlow(slot);
+        end;
+    end;
+end;
 
 -- Extracts information about a spell and adds it to the table of known spells: HF_SpellBook;
 local function SetSpell(_spellName)
@@ -52,7 +73,7 @@ end;
 local function ClearSpellSlots()
     -- This is so that we don't need extra check layers for doing things
     -- such as cooldowns for button frames that aren't being used.
-    wipe(ButtonList);
+    wipe(SpellSlotList);
 
     for i, unitFrame in pairs(HF_UnitCollection) do
         for ii, slot in pairs(unitFrame.spellSlots) do
@@ -63,7 +84,7 @@ end;
 
 -- Iterates over through each spell in the spell list, and adds them to
 -- each active unit frame.
--- Done like this instead of with the ButtonList because of when new slots are needed.
+-- Done like this instead of with the SpellSlotList because of when new slots are needed.
 -- When that happens, we need to know which unit frames to attach them to.
 local function SetSpellSlots()
     for i, spell in pairs(HF_SpellBook) do
@@ -117,11 +138,11 @@ end;
 -- Useful for cooldown triggering.
 function HF_SetSpellButtonRef(_frame, _spellName)
     -- If the table doesn't exist, make it.
-    if not ButtonList[_spellName] then
-        ButtonList[_spellName] = {};
+    if not SpellSlotList[_spellName] then
+        SpellSlotList[_spellName] = {};
     end;
 
-    table.insert(ButtonList[_spellName], _frame);
+    table.insert(SpellSlotList[_spellName], _frame);
 end;
 
 -- Any spell with a cooldown longer than the global cooldown that is currently active
@@ -152,7 +173,7 @@ local function StartCooldowns(_spellOnCooldown)
     if globalCooldown <= 0 or not spellName then return end;
 
     -- Iterate over the categories of Spell Buttons on UnitFrames.
-    for i, spellCat in pairs(ButtonList) do
+    for i, spellCat in pairs(SpellSlotList) do
         local spellCooldown = GetSpellBaseCooldown(i);
         local startTime, _, onCooldown = GetSpellCooldown(i);
 
@@ -166,7 +187,7 @@ local function StartCooldowns(_spellOnCooldown)
             -- Because blizzard can't give me this info in a nice easy to get way...
             local trueCooldown = globalCooldown;
             if (spellCooldown > globalCooldown) then 
-                trueCooldown = spellCooldown ;
+                trueCooldown = spellCooldown;
             end;
 
             SpellsOnCooldown[spellName] = {
@@ -176,6 +197,7 @@ local function StartCooldowns(_spellOnCooldown)
 
             for ii, spellButton in pairs(spellCat) do
                 spellButton.cooldown:SetCooldown(startTime, trueCooldown);
+
             end;
         else
             -- Otherwise just throw on the GCD unless it's already on a Long Cooldown.
@@ -203,11 +225,11 @@ local function InteruptCooldowns()
         SpellsOnCooldown[currentSpellName] = {start = 0, duration = 0};
     end;
 
-    for i, spellCat in pairs(ButtonList) do
+    for i, spellCat in pairs(SpellSlotList) do
         local isOnLongCooldown = GetIsOnLongCooldown(i);
         if not isOnLongCooldown then
-            for i, spellButton in pairs(spellCat) do
-                spellButton.cooldown:SetCooldown(GetTime(), 0);
+            for i, slot in pairs(spellCat) do
+                slot.cooldown:SetCooldown(GetTime(), 0);
             end;
         end;
     end;
