@@ -1,5 +1,5 @@
 HF_GroupCollection = {};
-HF_UnitCollection = {};
+HF_UnitCollection = {}; -- Must be stores as a character name from GetUnitName(_unitName, false);
 
 local GROUP_ME = 'Me';
 
@@ -19,15 +19,47 @@ local function RegisterEvents(_frame)
 end;
 
 local function UpdateRoster()
-    if IsInRaid('player') then
-        -- Do raid things.
-    elseif IsInGroup('player') then
-        -- Do party things.
-        -- print(UnitGroupRolesAssigned('player'));
-    else
-        -- Is by one's lonely self.
-        HF_GroupCollection[GROUP_ME] = HF_Group.new(GROUP_ME, {'player'});
+    print('update roster');
+    -- TODO: Decide whether 'me' should exist outside the roster, in both, or only in roster if exists else in 'me'.
+    -- GetRaidRosterInfo()
+    -- print(UnitGroupRolesAssigned('player'));
+    local groupSize = GetNumGroupMembers();
+
+    -- Clear out the current frames since I don't get informed of who left or joined. Start fresh.
+    wipe(HF_UnitCollection);
+    for i, group in pairs(HF_GroupCollection) do
+        group:ClearUnitFrames();
     end;
+
+    -- If the player is in a group, update the groups and units with them.
+    if (groupSize > 0) then
+        for i = 1, groupSize do
+            local unitName, unitRank, unitSubgroup, unitLevel,
+                  unitClass, _, zone, isOnline, isDead, _, _, unitRole = GetRaidRosterInfo(i);
+            local groupFrame = HF_GroupCollection[unitRole];
+            -- local unitDisplayName = GetUnitName(unitName, false);
+
+            if not groupFrame then
+                local newGroup = HF_Group.new(unitRole);
+                newGroup:AddUnitFrame(unitName);
+                HF_GroupCollection[unitRole] = newGroup;
+            else
+                groupFrame:AddUnitFrame(unitName);
+            end;
+        end;
+    else
+        local meGroup = HF_GroupCollection[GROUP_ME];
+        if not meGroup then
+            meGroup = HF_Group.new(GROUP_ME);
+            meGroup:AddUnitFrame('player');
+            HF_GroupCollection[GROUP_ME] = meGroup;
+        else
+            meGroup.units['player'].frame:Show();
+        end;
+    end;
+
+    -- TODO: Better way of handling spell slots needed. Set new spell slots only for new units.
+    HF_SetSpells();
 end;
 
 -- All of the event actions are registered here.
@@ -38,7 +70,7 @@ local function EventActions(_self, _event, ...)
 
     -- When a player's health or maximum health is changed...
     if (_event == 'UNIT_HEALTH_FREQUENT') or (_event == 'UNIT_MAXHEALTH') then
-        local unitName = arg1;
+        local unitName = GetUnitName(arg1, false);
         local unit = HF_UnitCollection[unitName];
 
         if unit then
@@ -49,7 +81,7 @@ local function EventActions(_self, _event, ...)
     elseif (_event == 'SPELL_ACTIVATION_OVERLAY_GLOW_HIDE') then
         HF_HideSpellProc(HF_SpellBook[arg1]);
     elseif (_event == 'UNIT_HEAL_PREDICTION') then
-        local unitName = arg1;
+        local unitName = GetUnitName(arg1, false);
         local unit = HF_UnitCollection[unitName];
 
         if unit then
@@ -57,9 +89,10 @@ local function EventActions(_self, _event, ...)
         end;
     elseif (_event == 'SPELLS_CHANGED') then
         -- Set or re-set the player's list of regsitered spells.
+        -- print(_event);
         HF_SetSpells();
     elseif (_event == 'GROUP_ROSTER_UPDATE') then
-        print('Update Roster.');
+        UpdateRoster();
     elseif (_event == 'UNIT_SPELLCAST_START') and (arg1 == 'player') then
         HF_CastingSpell(arg3);
     elseif (_event == 'UNIT_SPELLCAST_SUCCEEDED') and (arg1 == 'player') then

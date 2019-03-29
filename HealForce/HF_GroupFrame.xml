@@ -1,14 +1,5 @@
 <Ui xsi:schemaLocation="C:\Program Files (x86)\World of Warcraft\_retail_\BlizzardInterfaceCode\Interface\FrameXML\UI.xsd">
     <Frame name="HF_GroupFrame" hidden="false" virtual="true" movable="true">
-        <Layers>
-            <!-- Remove when debugging has finished. -->
-            <Layer level="BACKGROUND">
-                <Texture>
-                    <Color r="0" g="1" b="0" a="0.1"/>
-                </Texture>
-            </Layer>
-        </Layers>
-
         <Frames>
             <Frame name="DragFrame" parentKey="dragBar" hidden="false" virtual="true" enableMouse="true">
                 <Size x="100" y="20" />

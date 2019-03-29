@@ -94,14 +94,16 @@ local function SetSpellSlots()
 
             --  TODO: Add checker here for whether a unit frame is active.
 
-
             local unitSpellSlot = unitFrame.spellSlots[i];
+            
 
             -- If a spell slot has been created, re-use it.
-            if (unitSpellSlot and not unitSpellSlot.name) then
+            if (unitSpellSlot and not unitSpellSlot.spellName) then
+                -- print('re-use spell slot.');
                 unitSpellSlot:UpdateSlot(spell.name, unitFrame.name);
             else
                 -- Else, make a new one.
+                -- print('new spell slot.');
                 unitFrame:CreateSpellSlot(i, spell.name, unitFrame.name);
             end;
         end;
@@ -110,6 +112,7 @@ end;
 
 -- Resets the entire spell list for the character.
 function HF_SetSpells()
+    print('set spells');
     -- TODO: Add race detection for special race buffs.
 
     -- Clear the spellbooks and cooldowns.
@@ -146,6 +149,10 @@ function HF_SetSpellButtonRef(_frame, _spellName)
 
     table.insert(SpellSlotList[_spellName], _frame);
 end;
+
+-- function HF_RemoveSpellButtonRef(_spellName, _index)
+--     table.remove(SpellSlotList[_spellName], _index);
+-- end;
 
 -- Any spell with a cooldown longer than the global cooldown that is currently active
 -- will return true.

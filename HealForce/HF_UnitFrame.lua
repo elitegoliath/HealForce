@@ -50,6 +50,29 @@ local function CreateSpellSlot(_self, _slotNumber, _spellName, _target)
     table.insert(_self.spellSlots, newButton);
 end;
 
+
+local function ClearSelf(_self)
+    _self.frame:Hide();
+    _self.name = nil;
+    _self.maxHealth = 100;
+    _self.currentHealth = 100;
+    _self.hasIncomingHeals = false;
+
+    -- for i, slot in pairs(_self.spellSlots) do
+    --     slot:ClearSlot();
+    -- end;
+end;
+
+local function UpdateSelf(_self, _unitName)
+    local characterName = GetUnitName(_unitName, false);
+
+    _self.frame.unitName = characterName;
+    _self.frame.HealthBar_Button.HealthBar.unitName:SetText(characterName);
+    _self.name = characterName;
+    _self:UpdateHealth();
+end;
+
+
 -- Constructor for the HF_Unit class.
 function HF_Unit.new(_unitName, _parentFrame)
     local self = setmetatable({}, HF_Unit);
@@ -62,6 +85,7 @@ function HF_Unit.new(_unitName, _parentFrame)
 
     -- Initialize healthbar spell.
     self.frame.HealthBar_Button:SetAttribute('spell', 'Flash of Light');
+    self.frame.HealthBar_Button:SetAttribute('unit', _unitName);
 
     -- Set initial stats.
     self.name = _unitName;
@@ -78,6 +102,7 @@ function HF_Unit.new(_unitName, _parentFrame)
     self.UpdateHealth = UpdateHealth;
     self.UpdateHealPrediction = UpdateHealPrediction;
     self.CreateSpellSlot = CreateSpellSlot;
+    self.ClearSelf = ClearSelf;
 
     return self;
 end;
