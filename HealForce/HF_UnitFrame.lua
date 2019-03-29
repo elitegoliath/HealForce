@@ -40,6 +40,7 @@ local function UpdateHealPrediction(_self)
     end;
 end;
 
+-- Creates a new spell slot for use under each UnitFrame.
 local function CreateSpellSlot(_self, _slotNumber, _spellName, _target)
     local newButton = HF_SpellButton.new(_spellName, _self.frame, _target);
     newButton.frame:SetPoint('BOTTOMLEFT', (_slotNumber - 1) * BUTTON_SIZE, 0);
@@ -79,9 +80,4 @@ function HF_Unit.new(_unitName, _parentFrame)
     self.CreateSpellSlot = CreateSpellSlot;
 
     return self;
-end;
-
--- When the healthbar is clicked, cast it's associated spell.
-function HF_HealthbarClicked(_frame)
-    print(_frame.unitName);
 end;

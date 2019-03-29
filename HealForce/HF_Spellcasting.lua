@@ -31,6 +31,7 @@ local isCastingSpell = false;
 local spellBeingCast = nil; -- Used to cancel this spells cooldown and not ones with longer ones when interuptions occur.
 local globalCooldown = 1.5;
 
+-- When a spell procs, show the special effects on each affected button.
 function HF_ShowSpellProc(_spell)
     if (_spell) and (_spell.name) then
         local spellCat = SpellSlotList[_spell.name];
@@ -41,6 +42,7 @@ function HF_ShowSpellProc(_spell)
     end;
 end;
 
+-- When a spell is no longer on-proc, remove the effects from each affected button.
 function HF_HideSpellProc(_spell)
     if (_spell) and (_spell.name) then
         local spellCat = SpellSlotList[_spell.name];
