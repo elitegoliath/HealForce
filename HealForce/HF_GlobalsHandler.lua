@@ -1,8 +1,8 @@
-function HF_GetGroupFramePosition(_groupFrame)
+function HF_GetGroupFrameSettings_Position(_groupFrame)
     return _groupFrame.point, _groupFrame.relTo, _groupFrame.relPoint, _groupFrame.posX, _groupFrame.posY;
 end;
 
-function HF_SetGroupFramePosition(_frameName, ...)
+function HF_SetGroupFrameSettings_Position(_frameName, ...)
     if (savedSettings.groupFrames[_frameName] == nil) then
         savedSettings.groupFrames[_frameName] = {};
     end;
@@ -17,7 +17,7 @@ function HF_SetGroupFramePosition(_frameName, ...)
     frame.posY = _posY;
 end;
 
-function HF_GetGroupFrame(_frameName)
+function HF_GetGroupFrameSettings(_frameName)
     return savedSettings.groupFrames[_frameName];
 end;
 

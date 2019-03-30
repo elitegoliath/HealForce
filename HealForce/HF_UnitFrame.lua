@@ -12,7 +12,7 @@ HF_Unit.__index = HF_Unit;
 local BUTTON_SIZE = 32; -- Square size in pixels.
 
 -- Update health for an HF_Unit class instance.
-local function UpdateHealth(_self)
+function HF_Unit.updateHealth(_self)
     local maxHealth = UnitHealthMax(_self.name);
     local currentHealth = UnitHealth(_self.name);
     _self.frame.HealthBar_Button.HealthBar:SetMinMaxValues(0, maxHealth);
@@ -25,7 +25,7 @@ local function UpdateHealth(_self)
 end;
 
 -- Manipulates the heal-prediction bar on the HF_Unit class instance.
-local function UpdateHealPrediction(_self)
+function HF_Unit.updateHealPrediction(_self)
     local incomingHealAmount = UnitGetIncomingHeals(_self.name);
 
     if (incomingHealAmount > 0) then
@@ -41,7 +41,7 @@ local function UpdateHealPrediction(_self)
 end;
 
 -- Creates a new spell slot for use under each UnitFrame.
-local function CreateSpellSlot(_self, _slotNumber, _spellName, _target)
+function HF_Unit.createSpellSlot(_self, _slotNumber, _spellName, _target)
     local newButton = HF_SpellButton.new(_spellName, _self.frame, _target);
     newButton.frame:SetPoint('BOTTOMLEFT', (_slotNumber - 1) * BUTTON_SIZE, 0);
 
@@ -51,7 +51,7 @@ local function CreateSpellSlot(_self, _slotNumber, _spellName, _target)
 end;
 
 
-local function ClearSelf(_self)
+function HF_Unit.clearSelf(_self)
     _self.frame:Hide();
     _self.name = nil;
     _self.maxHealth = 100;
@@ -63,7 +63,7 @@ local function ClearSelf(_self)
     -- end;
 end;
 
-local function UpdateSelf(_self, _unitName)
+function HF_Unit.updateSelf(_self, _unitName)
     local characterName = GetUnitName(_unitName, false);
 
     _self.frame.unitName = characterName;
@@ -99,10 +99,10 @@ function HF_Unit.new(_unitName, _parentFrame)
     self.frame.HealthBar_Button.HealPredictBar:SetValue(0);
 
     -- Set class level functions.
-    self.UpdateHealth = UpdateHealth;
-    self.UpdateHealPrediction = UpdateHealPrediction;
-    self.CreateSpellSlot = CreateSpellSlot;
-    self.ClearSelf = ClearSelf;
+    -- self.UpdateHealth = UpdateHealth;
+    -- self.UpdateHealPrediction = UpdateHealPrediction;
+    -- self.CreateSpellSlot = CreateSpellSlot;
+    -- self.ClearSelf = ClearSelf;
 
     return self;
 end;

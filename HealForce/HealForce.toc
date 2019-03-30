@@ -19,5 +19,7 @@ HF_UnitFrame.xml
 HF_GroupFrame.lua
 HF_GroupFrame.xml
 
+HF_ObjectPool.lua
+
 HealForce.lua
 HealForce.xml

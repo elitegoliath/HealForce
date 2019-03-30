@@ -7,7 +7,7 @@ HF_SpellButton = {
 HF_SpellButton.__index = HF_SpellButton;
 
 -- Effectively clears the slot for re-use but maintaines the reference to it's frame.
-local function ClearSlot(_self)
+function HF_SpellButton.clearSlot(_self)
     _self.frame:Hide();
     _self.spellName = nil;
     _self.target = nil;
@@ -15,7 +15,7 @@ end;
 
 -- Updates a slot, basically meaning we activate it with new properties, and then
 -- re-register it in the Spell Button Ref.
-local function UpdateSlot(_self, _spellName, _target)
+function HF_SpellButton.updateSlot(_self, _spellName, _target)
     -- print('Update Slot: ', _spellName, _target);
     _self.frame:Show();
     _self.spellName = _spellName;
@@ -44,8 +44,8 @@ function HF_SpellButton.new(_spellName, _parentFrame, _target)
     self.frame:SetAttribute('unit', _target);
 
     -- Set class level functions.
-    self.ClearSlot = ClearSlot;
-    self.UpdateSlot = UpdateSlot;
+    -- self.ClearSlot = ClearSlot;
+    -- self.UpdateSlot = UpdateSlot;
 
     -- Store the newly created frame's reference for spellcasting concerns.
     HF_SetSpellButtonRef(self.frame, _spellName);
