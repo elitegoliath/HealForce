@@ -6,18 +6,27 @@ HF_ObjectPool = {
 HF_ObjectPool.__index = HF_ObjectPool;
 
 
+-- NOTE: Typically the _key passed into each function is also the first param
+    -- passed into each "new" and "update" function for the class instance.
+    -- This is so that the key of the instance is certain to be synced with
+    -- the data within.
+
+
 -- Checks the available pool for unused instances.
 -- If none exist, creates a new one.
 function HF_ObjectPool.createInstance(_self, _key, ...)
     local newInstance;
 
     if (#_self.available > 0) then
+        -- If there are instances that can be recycled, do it.
         newInstance = _self.available.pop();
         newInstance:update(_key, ...);
     else
+        -- Generate a new instance.
         newInstance = _self.class.new(_key, ...);
     end;
     
+    -- Add the new instance to the inuse table.
     _self.inUse[_key] = newInstance;
 
     return newInstance;
@@ -59,6 +68,7 @@ function HF_ObjectPool.getOrCreateInstance(_self, _key, ...)
     local instance = _self:getInstance(_key);
 
     if not (instance) then
+        -- If no matching instance is currently in use, get one from available or create a new one.
         instance = _self:createInstance(_key, ...);
     else
         -- If we are using a recycled instance, update it with the same values
