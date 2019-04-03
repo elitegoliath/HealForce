@@ -2,28 +2,15 @@
 HF_Group = {
     frame = nil;
     unitPool = nil;
-    unitCount = 0;
+    -- unitCount = 0;
 };
 HF_Group.__index = HF_Group;
 
 local UNIT_HEIGHT = -64;
 
 -- Adds a new unit to the frame. Recycles one if one exists but was nilled out.
-function HF_Group.addUnitFrame(_self, _unitName)
-
-
-
-    -- if _self.unitCount == 0 then
-    --     _self.frame:Show();
-    -- end;
-
-    -- local newUnit = _self.units[_self.unitCount];
-
-    -- if newUnit then
-    --     newUnit:UpdateSelf(_unitName);
-    -- else
-    --     newUnit = HF_Unit.new(_unitName, _self.frame);
-    -- end;
+function HF_Group.addUnit(_self, _unitName, _unitRole)
+    local newUnit = _self.unitPool:getOrCreateInstance(_unitName, _unitRole);
 
     -- -- Position the unit frame and adjust the count tracker.
     -- newUnit.frame:SetPoint('TOPLEFT', 0, (UNIT_HEIGHT * _self.unitCount));
@@ -38,28 +25,33 @@ function HF_Group.addUnitFrame(_self, _unitName)
     -- HF_UnitCollection[characterName] = newUnit;
 end;
 
-function HF_Group.clearUnitFrames(_self)
-    _self.frame:Hide();
-    _self.unitCount = 0;
+function HF_Group.removeUnit(_self)
 
-    for i, unitFrame in pairs(_self.units) do
-        unitFrame:ClearSelf();
-    end;
 end;
+
+-- function HF_Group.clearUnitFrames(_self)
+--     _self.frame:Hide();
+--     _self.unitCount = 0;
+
+--     for i, unitFrame in pairs(_self.units) do
+--         unitFrame:ClearSelf();
+--     end;
+-- end;
 
 function HF_Group.update(_self, _frameName)
     print('Existing Group Frame');
     _self.frame:Show();
     _self.frame.name = _frameName;
     _self.frame.dragBar.groupName:SetText(_frameName);
-    _self.unitCount = 0;
+    -- _self.unitCount = 0;
 end;
 
 function HF_Group.clear(_self)
     print('Clearing Group Frame');
     _self.frame:Hide();
     _self.frame.name = nil;
-    _self.unitCount = nil;
+    _self.unitPool:clearAll();
+    -- _self.unitCount = nil;
 
     -- TODO: Clear Units when a pool is set up for that.
 end;

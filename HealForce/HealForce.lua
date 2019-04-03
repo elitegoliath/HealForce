@@ -4,22 +4,7 @@
 -- All groups will be have their key named after Unit Role, except for Me for quick unit finds.
 -- Will adapt as this become more feature rich.
 local GROUP_ME = 'Me';
-local GroupPool = HF_ObjectPool.new(HF_Group);
-
--- Register the events we care about in this mod.
-local function RegisterEvents(_frame)
-    _frame:RegisterEvent('UNIT_HEALTH_FREQUENT');
-    _frame:RegisterEvent('UNIT_MAXHEALTH');
-    _frame:RegisterEvent('UNIT_HEAL_PREDICTION');
-    _frame:RegisterEvent('SPELLS_CHANGED');
-    _frame:RegisterEvent('SPELL_ACTIVATION_OVERLAY_GLOW_SHOW');
-    _frame:RegisterEvent('SPELL_ACTIVATION_OVERLAY_GLOW_HIDE');
-    _frame:RegisterEvent('GROUP_ROSTER_UPDATE');
-    _frame:RegisterEvent('UNIT_SPELLCAST_START');
-    _frame:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED');
-    _frame:RegisterEvent('UNIT_SPELLCAST_INTERRUPTED');
-    _frame:RegisterEvent('UNIT_SPELLCAST_FAILED');
-end;
+local GroupPool = HF_ObjectPool.new(HF_Group); -- Group keys will be by unit role for now.
 
 local function UpdateRoster()
     -- print('update roster');
@@ -39,6 +24,27 @@ local function UpdateRoster()
         local g = 'party';
         if (groupSize > 4) then g = 'raid' end;
 
+        -- Pass 1: Check to see if there are any units that are no longer in the group.
+        -- For every group in the pool...
+        for k, v in pairs(GroupPool:getAll()) do
+            -- For every unit in the group...
+            for kk, vv in pairs(v.unitPool:getAll()) do
+                local isInParty = UnitInParty(vv.name);
+                local isInRaid = UnitInRaid(vv.name);
+
+                -- If the unit is not listed in party or raid, they're gone.
+                if not (isInParty) and not (isInRaid) then
+                    v.unitPool:clearInstance(kk);
+                end;
+            end;
+
+            -- If the final unit of a group has been removed, clear the group.
+            if not (#v > 0) then
+                GroupPool:clearInstance(k);
+            end;
+        end;
+
+        -- Pass 2: Add or shift units that belong to the group.
         for i = 1, groupSize do
             -- local unitName, unitRank, unitSubgroup, unitLevel,
             --     unitClass, _, zone, isOnline, isDead, _, _, unitRole = GetRaidRosterInfo(i);
@@ -48,10 +54,17 @@ local function UpdateRoster()
             print('Unit: ', unitName, unitRole);
 
             local foundUnit = GroupPool:findInAll('unitPool', unitName);
-
-            -- If unit exists, make sure they didnt change spec, meaning we need to move them frames.
-
             local groupFrame = GroupPool:getOrCreateInstance(unitRole);
+
+            -- If unit exists and their role has changed, shift them to the proper frame.
+            if (foundUnit) and not (foundUnit.role == unitRole) then
+
+            elseif not (foundUnit) then
+                -- Otherwise, add the fresh boi to the roster.
+
+            end;
+
+            
 
             -- local unitDisplayName = GetUnitName(unitName, false);
         
@@ -80,7 +93,9 @@ local function UpdateRoster()
     else
 
         -- ME Group here
-        local meFrame = GroupPool:getOrCreateInstance(GROUP_ME);
+        local meRole = UnitGroupRolesAssigned('player');
+        local meGroup = GroupPool:getOrCreateInstance(GROUP_ME);
+        meGroup:addUnit('player', meRole);
 
         -- local meGroup = HF_GroupCollection[GROUP_ME];
         -- if not meGroup then
@@ -94,6 +109,21 @@ local function UpdateRoster()
 
     -- TODO: Better way of handling spell slots needed. Set new spell slots only for new units.
     -- HF_SetSpells();
+end;
+
+-- Register the events we care about in this mod.
+local function RegisterEvents(_frame)
+    _frame:RegisterEvent('UNIT_HEALTH_FREQUENT');
+    _frame:RegisterEvent('UNIT_MAXHEALTH');
+    _frame:RegisterEvent('UNIT_HEAL_PREDICTION');
+    _frame:RegisterEvent('SPELLS_CHANGED');
+    _frame:RegisterEvent('SPELL_ACTIVATION_OVERLAY_GLOW_SHOW');
+    _frame:RegisterEvent('SPELL_ACTIVATION_OVERLAY_GLOW_HIDE');
+    _frame:RegisterEvent('GROUP_ROSTER_UPDATE');
+    _frame:RegisterEvent('UNIT_SPELLCAST_START');
+    _frame:RegisterEvent('UNIT_SPELLCAST_SUCCEEDED');
+    _frame:RegisterEvent('UNIT_SPELLCAST_INTERRUPTED');
+    _frame:RegisterEvent('UNIT_SPELLCAST_FAILED');
 end;
 
 -- All of the event actions are registered here.
@@ -147,7 +177,7 @@ local function EventActions(_self, _event, ...)
 end;
 
 -- Initialize the mod by listening only to the enter world event.
--- ll other events don't matter until after this.
+-- All other events don't matter until after this.
 function HF_HealForce_Initialize(_frame)
     _frame:RegisterEvent('PLAYER_LOGIN');
     _frame:SetScript('OnEvent', EventActions);

@@ -2,6 +2,7 @@
 HF_Unit = {
     frame = nil;
     name = nil;
+    role = nil;
     maxHealth = 100;
     currentHealth = 100;
     spellSlots = {};
@@ -51,9 +52,10 @@ function HF_Unit.createSpellSlot(_self, _slotNumber, _spellName, _target)
 end;
 
 
-function HF_Unit.clearSelf(_self)
+function HF_Unit.clear(_self)
     _self.frame:Hide();
     _self.name = nil;
+    _self.role = nil;
     _self.maxHealth = 100;
     _self.currentHealth = 100;
     _self.hasIncomingHeals = false;
@@ -63,25 +65,26 @@ function HF_Unit.clearSelf(_self)
     -- end;
 end;
 
-function HF_Unit.updateSelf(_self, _unitName)
-    local characterName = GetUnitName(_unitName, false);
+function HF_Unit.update(_self, _unitName, _unitRole)
+    local characterDisplayName = GetUnitName(_unitName, false);
 
-    _self.frame.unitName = characterName;
-    _self.frame.HealthBar_Button.HealthBar.unitName:SetText(characterName);
-    _self.name = characterName;
+    _self.frame.unitName = _unitName;
+    _self.frame.HealthBar_Button.HealthBar.unitName:SetText(characterDisplayName);
+    _self.name = _unitName;
+    _self.role = _unitRole;
     _self:UpdateHealth();
 end;
 
 
 -- Constructor for the HF_Unit class.
-function HF_Unit.new(_unitName, _parentFrame)
+function HF_Unit.new(_parentFrame, _unitName, _unitRole)
     local self = setmetatable({}, HF_Unit);
-    local characterName = GetUnitName(_unitName, false);
+    local characterDisplayName = GetUnitName(_unitName, false);
 
     -- Generate the unit frame.
     self.frame = CreateFrame('Frame', _unitName .. 'UnitFrame', _parentFrame, 'HF_UnitFrame');
     self.frame.unitName = _unitName;
-    self.frame.HealthBar_Button.HealthBar.unitName:SetText(characterName);
+    self.frame.HealthBar_Button.HealthBar.unitName:SetText(characterDisplayName);
 
     -- Initialize healthbar spell.
     self.frame.HealthBar_Button:SetAttribute('spell', 'Flash of Light');
@@ -89,6 +92,7 @@ function HF_Unit.new(_unitName, _parentFrame)
 
     -- Set initial stats.
     self.name = _unitName;
+    self.role = _unitRole;
 
     -- Set the frame to match.
     local maxHealth = UnitHealthMax(_unitName);
@@ -97,12 +101,6 @@ function HF_Unit.new(_unitName, _parentFrame)
     self.frame.HealthBar_Button.HealthBar:SetValue(currentHealth);
     self.frame.HealthBar_Button.HealPredictBar:SetMinMaxValues(0, maxHealth);
     self.frame.HealthBar_Button.HealPredictBar:SetValue(0);
-
-    -- Set class level functions.
-    -- self.UpdateHealth = UpdateHealth;
-    -- self.UpdateHealPrediction = UpdateHealPrediction;
-    -- self.CreateSpellSlot = CreateSpellSlot;
-    -- self.ClearSelf = ClearSelf;
 
     return self;
 end;
