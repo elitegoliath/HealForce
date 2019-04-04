@@ -43,12 +43,12 @@ end;
 
 -- Creates a new spell slot for use under each UnitFrame.
 function HF_Unit.createSpellSlot(_self, _slotNumber, _spellName, _target)
-    local newButton = HF_SpellButton.new(_spellName, _self.frame, _target);
-    newButton.frame:SetPoint('BOTTOMLEFT', (_slotNumber - 1) * BUTTON_SIZE, 0);
+    -- local newButton = HF_SpellButton.new(_spellName, _self.frame, _target);
+    -- newButton.frame:SetPoint('BOTTOMLEFT', (_slotNumber - 1) * BUTTON_SIZE, 0);
 
     -- When a spell slot is created, it must be able to be re-used.
     -- Register it in the table for this purpose only.
-    table.insert(_self.spellSlots, newButton);
+    -- table.insert(_self.spellSlots, newButton);
 end;
 
 
@@ -77,7 +77,8 @@ end;
 
 
 -- Constructor for the HF_Unit class.
-function HF_Unit.new(_parentFrame, _unitName, _unitRole)
+function HF_Unit.new(_unitName, _unitRole, _parentFrame)
+    print('New Unit Frame');
     local self = setmetatable({}, HF_Unit);
     local characterDisplayName = GetUnitName(_unitName, false);
 

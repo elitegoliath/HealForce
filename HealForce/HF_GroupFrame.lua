@@ -2,15 +2,15 @@
 HF_Group = {
     frame = nil;
     unitPool = nil;
-    -- unitCount = 0;
 };
 HF_Group.__index = HF_Group;
 
-local UNIT_HEIGHT = -64;
+local UNIT_HEIGHT = 64;
 
 -- Adds a new unit to the frame. Recycles one if one exists but was nilled out.
 function HF_Group.addUnit(_self, _unitName, _unitRole)
-    local newUnit = _self.unitPool:getOrCreateInstance(_unitName, _unitRole);
+    local newUnit = _self.unitPool:getOrCreateInstance(_unitName, _unitRole, _self.frame);
+    newUnit.frame:SetPoint('TOPLEFT', 0, (UNIT_HEIGHT * #_self.unitPool.inUse));
 
     -- -- Position the unit frame and adjust the count tracker.
     -- newUnit.frame:SetPoint('TOPLEFT', 0, (UNIT_HEIGHT * _self.unitCount));
@@ -25,8 +25,10 @@ function HF_Group.addUnit(_self, _unitName, _unitRole)
     -- HF_UnitCollection[characterName] = newUnit;
 end;
 
-function HF_Group.removeUnit(_self)
+function HF_Group.removeUnit(_self, _unitName)
+    _self.unitPool:clearInstance(_unitName);
 
+    -- TODO: Re-organize the group's existing instances so no gaps exist.
 end;
 
 -- function HF_Group.clearUnitFrames(_self)

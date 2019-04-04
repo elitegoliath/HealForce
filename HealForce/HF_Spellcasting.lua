@@ -33,62 +33,62 @@ local globalCooldown = 1.5;
 
 -- When a spell procs, show the special effects on each affected button.
 function HF_ShowSpellProc(_spell)
-    if (_spell) and (_spell.name) then
-        local spellCat = SpellSlotList[_spell.name];
+    -- if (_spell) and (_spell.name) then
+    --     local spellCat = SpellSlotList[_spell.name];
 
-        for i, slot in pairs(spellCat) do
-            ActionButton_ShowOverlayGlow(slot);
-        end;
-    end;
+    --     for i, slot in pairs(spellCat) do
+    --         ActionButton_ShowOverlayGlow(slot);
+    --     end;
+    -- end;
 end;
 
 -- When a spell is no longer on-proc, remove the effects from each affected button.
 function HF_HideSpellProc(_spell)
-    if (_spell) and (_spell.name) then
-        local spellCat = SpellSlotList[_spell.name];
+    -- if (_spell) and (_spell.name) then
+    --     local spellCat = SpellSlotList[_spell.name];
 
-        for i, slot in pairs(spellCat) do
-            ActionButton_HideOverlayGlow(slot);
-        end;
-    end;
+    --     for i, slot in pairs(spellCat) do
+    --         ActionButton_HideOverlayGlow(slot);
+    --     end;
+    -- end;
 end;
 
 -- Extracts information about a spell and adds it to the table of known spells: HF_SpellBook;
 local function SetSpell(_spellName)
-    local sName, rank, icon, castTime, minRange, maxRange, spellId = GetSpellInfo(_spellName);
-    local icon = GetSpellTexture(sName);
+    -- local sName, rank, icon, castTime, minRange, maxRange, spellId = GetSpellInfo(_spellName);
+    -- local icon = GetSpellTexture(sName);
 
-    if sName and spellId and icon then
-        local newSpell = {
-            name = sName,
-            id = spellId,
-            icon = icon,
-            minRange = minRange,
-            maxRange = maxRange,
-        };
+    -- if sName and spellId and icon then
+    --     local newSpell = {
+    --         name = sName,
+    --         id = spellId,
+    --         icon = icon,
+    --         minRange = minRange,
+    --         maxRange = maxRange,
+    --     };
 
-        table.insert(HF_SpellBook, newSpell);
-    end;
+    --     table.insert(HF_SpellBook, newSpell);
+    -- end;
 end;
 
 -- Iterates over all of the spell slots and clears them out.
 local function ClearSpellSlots()
     -- This is so that we don't need extra check layers for doing things
     -- such as cooldowns for button frames that aren't being used.
-    wipe(SpellSlotList);
+    -- wipe(SpellSlotList);
 
-    for i, unitFrame in pairs(HF_UnitCollection) do
-        for ii, slot in pairs(unitFrame.spellSlots) do
-            slot:ClearSlot();
-        end;
-    end;
+    -- for i, unitFrame in pairs(HF_UnitCollection) do
+    --     for ii, slot in pairs(unitFrame.spellSlots) do
+    --         slot:ClearSlot();
+    --     end;
+    -- end;
 end;
 
 -- Iterates over through each spell in the spell list, and adds them to
 -- each active unit frame.
 -- Done like this instead of with the SpellSlotList because of when new slots are needed.
 -- When that happens, we need to know which unit frames to attach them to.
-local function SetSpellSlots()
+local function SetSpellModel()
     for i, spell in pairs(HF_SpellBook) do
         for ii, unitFrame in pairs(HF_UnitCollection) do
 
@@ -116,9 +116,9 @@ function HF_SetSpells()
     -- TODO: Add race detection for special race buffs.
 
     -- Clear the spellbooks and cooldowns.
-    wipe(HF_SpellBook);
-    wipe(SpellsOnCooldown);
-    ClearSpellSlots();
+    -- wipe(HF_SpellBook);
+    -- wipe(SpellsOnCooldown);
+    -- ClearSpellSlots();
 
     -- Get the player's information.
     local playerClass = UnitClass('player');
@@ -136,18 +136,18 @@ function HF_SetSpells()
     end;
 
     -- Set spell slots.
-    SetSpellSlots();
+    SetSpellModel();
 end;
 
 -- Used to keep track of each button for each spell.
 -- Useful for cooldown triggering.
 function HF_SetSpellButtonRef(_frame, _spellName)
     -- If the table doesn't exist, make it.
-    if not SpellSlotList[_spellName] then
-        SpellSlotList[_spellName] = {};
-    end;
+    -- if not SpellSlotList[_spellName] then
+    --     SpellSlotList[_spellName] = {};
+    -- end;
 
-    table.insert(SpellSlotList[_spellName], _frame);
+    -- table.insert(SpellSlotList[_spellName], _frame);
 end;
 
 -- function HF_RemoveSpellButtonRef(_spellName, _index)
@@ -157,123 +157,123 @@ end;
 -- Any spell with a cooldown longer than the global cooldown that is currently active
 -- will return true.
 local function GetIsOnLongCooldown(_spellName)
-    local cd = SpellsOnCooldown[_spellName];
-    local isOnLongCooldown = false;
+    -- local cd = SpellsOnCooldown[_spellName];
+    -- local isOnLongCooldown = false;
     
-    if (cd and cd.start > 0) then
-        local timeLeft = (cd.start + cd.duration) - GetTime();
-        if (timeLeft > globalCooldown) then isOnLongCooldown = true end;
-    end;
+    -- if (cd and cd.start > 0) then
+    --     local timeLeft = (cd.start + cd.duration) - GetTime();
+    --     if (timeLeft > globalCooldown) then isOnLongCooldown = true end;
+    -- end;
 
-    return isOnLongCooldown;
+    -- return isOnLongCooldown;
 end;
 
 -- Begins cooldowns. Takes into consideration anything already on a Long Cooldown.
 -- Also factors in if the spell just cast has a Long Cooldown.
 -- All other spells get a global cooldown.
 local function StartCooldowns(_spellOnCooldown)
-    local spellName = GetSpellInfo(_spellOnCooldown);
-    local _, globalCD = GetSpellBaseCooldown(_spellOnCooldown);
+    -- local spellName = GetSpellInfo(_spellOnCooldown);
+    -- local _, globalCD = GetSpellBaseCooldown(_spellOnCooldown);
     
-    if not globalCD then return end;
+    -- if not globalCD then return end;
 
-    globalCooldown = globalCD / 1000;
+    -- globalCooldown = globalCD / 1000;
 
-    if globalCooldown <= 0 or not spellName then return end;
+    -- if globalCooldown <= 0 or not spellName then return end;
 
-    -- Iterate over the categories of Spell Buttons on UnitFrames.
-    for i, spellCat in pairs(SpellSlotList) do
-        local spellCooldown = GetSpellBaseCooldown(i);
-        local startTime, _, onCooldown = GetSpellCooldown(i);
+    -- -- Iterate over the categories of Spell Buttons on UnitFrames.
+    -- for i, spellCat in pairs(SpellSlotList) do
+    --     local spellCooldown = GetSpellBaseCooldown(i);
+    --     local startTime, _, onCooldown = GetSpellCooldown(i);
 
-        if (spellCooldown > 0) then
-            spellCooldown = spellCooldown / 1000;
-        end;
+    --     if (spellCooldown > 0) then
+    --         spellCooldown = spellCooldown / 1000;
+    --     end;
 
-        -- If the current category is the one that was just cast...
-        -- Consider if it has a Long Cooldown or to just use GCD.
-        if i == spellName then
-            -- Because blizzard can't give me this info in a nice easy to get way...
-            local trueCooldown = globalCooldown;
-            if (spellCooldown > globalCooldown) then 
-                trueCooldown = spellCooldown;
-            end;
+    --     -- If the current category is the one that was just cast...
+    --     -- Consider if it has a Long Cooldown or to just use GCD.
+    --     if i == spellName then
+    --         -- Because blizzard can't give me this info in a nice easy to get way...
+    --         local trueCooldown = globalCooldown;
+    --         if (spellCooldown > globalCooldown) then 
+    --             trueCooldown = spellCooldown;
+    --         end;
 
-            SpellsOnCooldown[spellName] = {
-                start = startTime,
-                duration = trueCooldown,
-            };
+    --         SpellsOnCooldown[spellName] = {
+    --             start = startTime,
+    --             duration = trueCooldown,
+    --         };
 
-            for ii, spellButton in pairs(spellCat) do
-                spellButton.cooldown:SetCooldown(startTime, trueCooldown);
+    --         for ii, spellButton in pairs(spellCat) do
+    --             spellButton.cooldown:SetCooldown(startTime, trueCooldown);
 
-            end;
-        else
-            -- Otherwise just throw on the GCD unless it's already on a Long Cooldown.
-            local isOnLongCooldown = GetIsOnLongCooldown(i);
+    --         end;
+    --     else
+    --         -- Otherwise just throw on the GCD unless it's already on a Long Cooldown.
+    --         local isOnLongCooldown = GetIsOnLongCooldown(i);
 
-            if not isOnLongCooldown then
-                SpellsOnCooldown[i] = {start = 0, duration = 0}
-                for ii, spellButton in pairs(spellCat) do
-                    spellButton.cooldown:SetCooldown(startTime, globalCooldown);
-                end;
-            end;
-        end;
-    end;
+    --         if not isOnLongCooldown then
+    --             SpellsOnCooldown[i] = {start = 0, duration = 0}
+    --             for ii, spellButton in pairs(spellCat) do
+    --                 spellButton.cooldown:SetCooldown(startTime, globalCooldown);
+    --             end;
+    --         end;
+    --     end;
+    -- end;
 end;
 
 -- Interruptions happen, and when they do, any cooldowns activated by the spell...
 -- global or otherwise, need to be cancelled.
 local function InteruptCooldowns()
-    if globalCooldown <= 0 then return end;
+    -- if globalCooldown <= 0 then return end;
 
-    local currentSpellName = GetSpellInfo(spellBeingCast);
-    local registeredSpell = HF_SpellBook[_spellOnCooldown];
+    -- local currentSpellName = GetSpellInfo(spellBeingCast);
+    -- local registeredSpell = HF_SpellBook[_spellOnCooldown];
 
-    if currentSpellName and registeredSpell and SpellsOnCooldown[currentSpellName] then
-        SpellsOnCooldown[currentSpellName] = {start = 0, duration = 0};
-    end;
+    -- if currentSpellName and registeredSpell and SpellsOnCooldown[currentSpellName] then
+    --     SpellsOnCooldown[currentSpellName] = {start = 0, duration = 0};
+    -- end;
 
-    for i, spellCat in pairs(SpellSlotList) do
-        local isOnLongCooldown = GetIsOnLongCooldown(i);
-        if not isOnLongCooldown then
-            for i, slot in pairs(spellCat) do
-                slot.cooldown:SetCooldown(GetTime(), 0);
-            end;
-        end;
-    end;
+    -- for i, spellCat in pairs(SpellSlotList) do
+    --     local isOnLongCooldown = GetIsOnLongCooldown(i);
+    --     if not isOnLongCooldown then
+    --         for i, slot in pairs(spellCat) do
+    --             slot.cooldown:SetCooldown(GetTime(), 0);
+    --         end;
+    --     end;
+    -- end;
 end;
 
 -- If casting a non-instant cast spell...
 function HF_CastingSpell(_spellID)
-    isCastingSpell = true;
-    cooldownsActive = true;
-    spellBeingCast = _spellID;
+    -- isCastingSpell = true;
+    -- cooldownsActive = true;
+    -- spellBeingCast = _spellID;
 
-    StartCooldowns(_spellID);
+    -- StartCooldowns(_spellID);
 end;
 
 -- When a spell succeeds in being cast, whether it was an instant cast or
 -- a spell with a cast time, it needs to be handled.
 function HF_CastingSpellSuccess(_spellID)
-    cooldownsActive = true;
+    -- cooldownsActive = true;
     
-    -- If the spell that succeeded was actually an instant cast spell...
-    if not isCastingSpell then
-        StartCooldowns(_spellID);
-    else
-        -- Otherwise, reset the flags and variables we track for spellcasting.
-        isCastingSpell = false;
-        spellBeingCast = nil;
-    end;
+    -- -- If the spell that succeeded was actually an instant cast spell...
+    -- if not isCastingSpell then
+    --     StartCooldowns(_spellID);
+    -- else
+    --     -- Otherwise, reset the flags and variables we track for spellcasting.
+    --     isCastingSpell = false;
+    --     spellBeingCast = nil;
+    -- end;
 end;
 
 -- When a spell has been interrupted, cancel associated cooldowns.
 function HF_CancelCooldowns()
-    if cooldownsActive and isCastingSpell then
-        cooldownsActive = false;
-        isCastingSpell = false;
+    -- if cooldownsActive and isCastingSpell then
+    --     cooldownsActive = false;
+    --     isCastingSpell = false;
 
-        InteruptCooldowns();
-    end;
+    --     InteruptCooldowns();
+    -- end;
 end;

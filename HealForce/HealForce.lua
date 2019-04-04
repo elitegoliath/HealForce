@@ -20,6 +20,13 @@ local function UpdateRoster()
 
     -- If the player is in a group, update the groups and units with them.
     if (groupSize > 0) then
+        -- If the meGroup exists, shut it down.
+        local meGroup = GroupPool:getInstance(GROUP_ME);
+        if (meGroup) then
+            meGroup:clearAll();
+            GroupPool:clearInstance(GROUP_ME);
+        end;
+
         -- When getting the unit name, we need to know whether to check with party or raid.
         local g = 'party';
         if (groupSize > 4) then g = 'raid' end;
@@ -40,6 +47,7 @@ local function UpdateRoster()
 
             -- If the final unit of a group has been removed, clear the group.
             if not (#v > 0) then
+                print('Clear group pool');
                 GroupPool:clearInstance(k);
             end;
         end;
@@ -53,15 +61,22 @@ local function UpdateRoster()
             -- local unitClass = UnitClass(unitName); -- To be used later.
             print('Unit: ', unitName, unitRole);
 
-            local foundUnit = GroupPool:findInAll('unitPool', unitName);
-            local groupFrame = GroupPool:getOrCreateInstance(unitRole);
+            local foundUnit = GroupPool:findInAll('unitPool', unitName, true);
+            local group = GroupPool:getOrCreateInstance(unitRole);
 
             -- If unit exists and their role has changed, shift them to the proper frame.
             if (foundUnit) and not (foundUnit.role == unitRole) then
+                print('Unit Swapping Roles');
+                local oldUnitGroup = GroupPool:getInstance(foundUnit.role);
+                if (oldUnitGroup) then
+                    oldUnitGroup:removeUnit(unitName);
+                end;
 
+                group:addUnit(unitName, unitRole);
             elseif not (foundUnit) then
+                print('New Unit in Group', unitName);
                 -- Otherwise, add the fresh boi to the roster.
-
+                group:addUnit(unitName, unitRole);
             end;
 
             
@@ -91,11 +106,13 @@ local function UpdateRoster()
             -- end;
         end;
     else
-
         -- ME Group here
+        local meName = UnitName('player');
         local meRole = UnitGroupRolesAssigned('player');
         local meGroup = GroupPool:getOrCreateInstance(GROUP_ME);
-        meGroup:addUnit('player', meRole);
+        meGroup:addUnit(meName, meRole);
+
+        -- print('My lone group.', meName);
 
         -- local meGroup = HF_GroupCollection[GROUP_ME];
         -- if not meGroup then
@@ -134,26 +151,26 @@ local function EventActions(_self, _event, ...)
 
     -- When a player's health or maximum health is changed...
     if (_event == 'UNIT_HEALTH_FREQUENT') or (_event == 'UNIT_MAXHEALTH') then
-        local unitName = GetUnitName(arg1, false);
-        local unit = HF_UnitCollection[unitName];
+        local unitName = UnitName(arg1);
+        local unit = GroupPool:findInAll('unitPool', unitName, true);
 
         if unit then
-            unit:UpdateHealth();
+            unit:updateHealth();
         end;
     elseif (_event == 'SPELL_ACTIVATION_OVERLAY_GLOW_SHOW') then
         HF_ShowSpellProc(HF_SpellBook[arg1]);
     elseif (_event == 'SPELL_ACTIVATION_OVERLAY_GLOW_HIDE') then
         HF_HideSpellProc(HF_SpellBook[arg1]);
     elseif (_event == 'UNIT_HEAL_PREDICTION') then
-        local unitName = GetUnitName(arg1, false);
-        local unit = HF_UnitCollection[unitName];
+        local unitName = UnitName(arg1);
+        local unit = GroupPool:findInAll('unitPool', unitName, true);
 
         if unit then
-            unit:UpdateHealPrediction();
+            unit:updateHealPrediction();
         end;
     elseif (_event == 'SPELLS_CHANGED') then
         -- Set or re-set the player's list of regsitered spells.
-        -- HF_SetSpells();
+        HF_SetSpells();
     elseif (_event == 'GROUP_ROSTER_UPDATE') then
         UpdateRoster();
     elseif (_event == 'UNIT_SPELLCAST_START') and (arg1 == 'player') then

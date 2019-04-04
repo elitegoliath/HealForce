@@ -81,7 +81,8 @@ end;
 
 
 -- Searches through all instances in this pool for a specific prop or table value from inUse instances.
-function HF_ObjectPool.findInAll(_self, _prop, _key)
+function HF_ObjectPool.findInAll(_self, _prop, _key, _isNestedPool)
+    _isNestedPool = _isNestedPool or false;
     local foundValue = nil;
 
     for k, v in pairs(_self.inUse) do
@@ -89,7 +90,12 @@ function HF_ObjectPool.findInAll(_self, _prop, _key)
 
         if (_key) and (foundProp) then
             -- If a key is provided, then we're looking inside a table for a value.
-            foundValue = foundProp[_key];
+            if (_isNestedPool) then
+                -- If the nested table is another pool...
+                foundValue = foundProp:getInstance(_key);
+            else
+                foundValue = foundProp[_key];
+            end;
         else
             -- The property IS the value.
             foundValue = foundProp;
@@ -103,7 +109,8 @@ function HF_ObjectPool.findInAll(_self, _prop, _key)
 end;
 
 -- A function for finding properties inside of the table of inUse objects.
-function HF_ObjectPool.findIn(_self, _poolKey, _prop, _key)
+function HF_ObjectPool.findIn(_self, _poolKey, _prop, _key, _isNestedPool)
+    _isNestedPool = _isNestedPool or false;
     local foundValue = nil;
     local pool = _self.inUse[_poolKey];
 
@@ -113,7 +120,12 @@ function HF_ObjectPool.findIn(_self, _poolKey, _prop, _key)
         
         if (_key) and (foundProp) then
             -- If a key is provided, then we're looking inside a table for a value.
-            foundValue = foundProp[_key];
+            if (_isNestedPool) then
+                -- If the nested table is another pool...
+                foundValue = foundProp:getInstance(_key);
+            else
+                foundValue = foundProp[_key];
+            end;
         else
             -- The property IS the value.
             foundValue = foundProp;
