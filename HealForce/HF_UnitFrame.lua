@@ -5,12 +5,27 @@ HF_Unit = {
     role = nil;
     maxHealth = 100;
     currentHealth = 100;
-    spellSlots = {};
+    healingSpellSlotPool = nil;
     hasIncomingHeals = false;
 };
 HF_Unit.__index = HF_Unit;
 
 local BUTTON_SIZE = 32; -- Square size in pixels.
+
+function HF_Unit.updateSpellSlots(_self, _spellSlotModel)
+    local target = UnitName(_self.name);
+
+    -- Update healing spells.
+    local healingSpells = _spellSlotModel[SLOT_TYPE_HEAL];
+
+    -- For every healing spell in the spell model...
+    for k, spell in pairs(healingSpells) do
+        local spellButton = healSpellSlotPool:getOrCreateInstance(spell.name, spell.name, target, _self.frame);
+        local slotNumber = spell.slotNumber;
+        
+        spellButton.frame:SetPoint('BOTTOMLEFT', (slotNumber - 1) * BUTTON_SIZE, 0);
+    end;
+end;
 
 -- Update health for an HF_Unit class instance.
 function HF_Unit.updateHealth(_self)
@@ -21,7 +36,7 @@ function HF_Unit.updateHealth(_self)
     
     -- If there are incoming heals, it's status bar needs to be updated to match.
     if _self.hasIncomingHeals then
-        _self:UpdateHealPrediction();
+        _self:updateHealPrediction();
     end;
 end;
 
@@ -72,15 +87,18 @@ function HF_Unit.update(_self, _unitName, _unitRole)
     _self.frame.HealthBar_Button.HealthBar.unitName:SetText(characterDisplayName);
     _self.name = _unitName;
     _self.role = _unitRole;
-    _self:UpdateHealth();
+    _self:updateHealth();
 end;
 
 
 -- Constructor for the HF_Unit class.
 function HF_Unit.new(_unitName, _unitRole, _parentFrame)
-    print('New Unit Frame');
+    -- print('New Unit Frame', _parentFrame.name);
     local self = setmetatable({}, HF_Unit);
     local characterDisplayName = GetUnitName(_unitName, false);
+
+    -- Initialize spell slot pools.
+    self.healingSpellSlotPool = HF_ObjectPool.new(HF_SpellButton);
 
     -- Generate the unit frame.
     self.frame = CreateFrame('Frame', _unitName .. 'UnitFrame', _parentFrame, 'HF_UnitFrame');

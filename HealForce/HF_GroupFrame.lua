@@ -60,7 +60,7 @@ end;
 
 -- Constructor for the HF_Group class.
 function HF_Group.new(_frameName)
-    print('New Group Frame');
+    -- print('New Group Frame', _frameName);
     local self = setmetatable({}, HF_Group);
 
     -- Create the group frame.

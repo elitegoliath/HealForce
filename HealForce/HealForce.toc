@@ -6,6 +6,7 @@
 ## DefaultState: enabled
 ## SavedVariables: savedSettings
 
+HF_ObjectPool.lua
 HF_GlobalsHandler.lua
 
 HF_SpellButtonFrame.lua
@@ -18,8 +19,6 @@ HF_UnitFrame.xml
 
 HF_GroupFrame.lua
 HF_GroupFrame.xml
-
-HF_ObjectPool.lua
 
 HealForce.lua
 HealForce.xml

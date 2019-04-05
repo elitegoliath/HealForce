@@ -1,6 +1,6 @@
 -- This table of spells can be accessed either by Spell Name or ID.
 -- Due to the variety of ways spells need to be accessed, this is necessary.
-HF_SpellBook = {};
+local SpellBook = {};
 local spellbookMeta = {
     __index = function(_table, _key)
         local filter = function(_prop, _value)
@@ -21,15 +21,43 @@ local spellbookMeta = {
         end;
     end;
 };
-setmetatable(HF_SpellBook, spellbookMeta);
+setmetatable(SpellBook, spellbookMeta);
 
-local SpellSlotList = {}; -- A flatter list of UnitFrame spell button references.
-local SpellsOnCooldown = {}; -- Tracks which spells were on cooldown and when.
-local SpellsWithCharges = {}; -- There are extra concerns with spells that have charges.
+
+
+local SpellSlotsModel = {
+
+};
+
+local SPELLS_ON_COOLDOWN = 'on_cooldown';
+SLOT_TYPE_HEAL = 'heal';
+
+
+
+--local SpellSlotList = {}; -- A flatter list of UnitFrame spell button references.
+--local SpellsOnCooldown = {}; -- Tracks which spells were on cooldown and when.
+--local SpellsWithCharges = {}; -- There are extra concerns with spells that have charges.
 local cooldownsActive = false;
 local isCastingSpell = false;
 local spellBeingCast = nil; -- Used to cancel this spells cooldown and not ones with longer ones when interuptions occur.
 local globalCooldown = 1.5;
+
+local function UpdateUnitSpellSlots()
+    -- -- Get all of the unit groups.
+    -- local allGroups = HF_GroupPool:getAll();
+
+    -- -- For each unit group...
+    -- for k, group in pairs(allGroups) do
+
+    --     -- Get all of the units.
+    --     local allUnits = group.unitPool:getAll();
+
+    --     -- For each unit...
+    --     for kk, unit in pairs(allUnits) do
+    --         unit:updateSpellSlots(SpellSlotsModel);
+    --     end;
+    -- end;
+end;
 
 -- When a spell procs, show the special effects on each affected button.
 function HF_ShowSpellProc(_spell)
@@ -53,24 +81,6 @@ function HF_HideSpellProc(_spell)
     -- end;
 end;
 
--- Extracts information about a spell and adds it to the table of known spells: HF_SpellBook;
-local function SetSpell(_spellName)
-    -- local sName, rank, icon, castTime, minRange, maxRange, spellId = GetSpellInfo(_spellName);
-    -- local icon = GetSpellTexture(sName);
-
-    -- if sName and spellId and icon then
-    --     local newSpell = {
-    --         name = sName,
-    --         id = spellId,
-    --         icon = icon,
-    --         minRange = minRange,
-    --         maxRange = maxRange,
-    --     };
-
-    --     table.insert(HF_SpellBook, newSpell);
-    -- end;
-end;
-
 -- Iterates over all of the spell slots and clears them out.
 local function ClearSpellSlots()
     -- This is so that we don't need extra check layers for doing things
@@ -88,27 +98,78 @@ end;
 -- each active unit frame.
 -- Done like this instead of with the SpellSlotList because of when new slots are needed.
 -- When that happens, we need to know which unit frames to attach them to.
-local function SetSpellModel()
-    for i, spell in pairs(HF_SpellBook) do
-        for ii, unitFrame in pairs(HF_UnitCollection) do
+local function SetSpellSlotsModel()
+    -- Clear the existing model.
+    SpellSlotsModel[SLOT_TYPE_HEAL] = {};
+    SpellSlotsModel[SPELLS_ON_COOLDOWN] = {};
 
-            --  TODO: Add checker here for whether a unit frame is active.
+    -- For each spell in the spellbook...
+    for i = 1, #SpellBook do
+        -- Doing it like this will allow for specific slot binding later. such as 'slot'..i
+        local spell = SpellBook[i];
+        spell.slotNumber = i;
+        local spellSlot = SpellSlotsModel[spell.slotType];
 
-            local unitSpellSlot = unitFrame.spellSlots[i];
+        spellSlot[spell.name] = spell;
+
+        -- table.insert(SpellSlotsModel[spell.slotType], spell);
+        -- print(SpellBook[i].name);
+    end;
+
+    -- Go through each active unit frame and ensure the spells match the model.
+    UpdateUnitSpellSlots();
+
+    -- for i, spell in pairs(HF_SpellBook) do
+    --     for ii, unitFrame in pairs(HF_UnitCollection) do
+
+    --         --  TODO: Add checker here for whether a unit frame is active.
+
+    --         local unitSpellSlot = unitFrame.spellSlots[i];
             
 
-            -- If a spell slot has been created, re-use it.
-            if (unitSpellSlot and not unitSpellSlot.spellName) then
-                -- print('re-use spell slot.');
-                unitSpellSlot:UpdateSlot(spell.name, unitFrame.name);
-            else
-                -- Else, make a new one.
-                -- print('new spell slot.');
-                unitFrame:CreateSpellSlot(i, spell.name, unitFrame.name);
-            end;
-        end;
+    --         -- If a spell slot has been created, re-use it.
+    --         if (unitSpellSlot and not unitSpellSlot.spellName) then
+    --             -- print('re-use spell slot.');
+    --             unitSpellSlot:UpdateSlot(spell.name, unitFrame.name);
+    --         else
+    --             -- Else, make a new one.
+    --             -- print('new spell slot.');
+    --             unitFrame:CreateSpellSlot(i, spell.name, unitFrame.name);
+    --         end;
+    --     end;
+    -- end;
+end;
+
+
+
+
+-- Extracts information about a spell and adds it to the table of known spells: HF_SpellBook;
+local function SetSpell(_spellName, _slotType, _slotNumber)
+    local sName, rank, icon, castTime, minRange, maxRange, spellId = GetSpellInfo(_spellName);
+    local icon = GetSpellTexture(sName);
+
+    -- Get or Set the spell category table based on slot type.
+    -- local spellCategory = SpellBook[_slotType];
+    -- if not (spellCategory) then
+    --     SpellBook[_slotType] = {};
+    -- end;
+
+    if sName and spellId and icon then
+        local newSpell = {
+            name = sName;
+            id = spellId;
+            icon = icon;
+            minRange = minRange;
+            maxRange = maxRange;
+            slotType = _slotType;
+            slotNumber = nil;
+        };
+
+        table.insert(SpellBook, newSpell);
     end;
 end;
+
+
 
 -- Resets the entire spell list for the character.
 function HF_SetSpells()
@@ -116,7 +177,7 @@ function HF_SetSpells()
     -- TODO: Add race detection for special race buffs.
 
     -- Clear the spellbooks and cooldowns.
-    -- wipe(HF_SpellBook);
+    wipe(SpellBook);
     -- wipe(SpellsOnCooldown);
     -- ClearSpellSlots();
 
@@ -127,16 +188,16 @@ function HF_SetSpells()
     -- Check the player's loadout.
     if (playerClass == 'Paladin') and (playerSpec == 1) then
         -- If a Holy Paladin...
-        SetSpell('Flash of Light');
-        SetSpell('Holy Shock');
-        SetSpell('Holy Light');
+        SetSpell('Flash of Light', SLOT_TYPE_HEAL);
+        SetSpell('Holy Shock', SLOT_TYPE_HEAL);
+        SetSpell('Holy Light', SLOT_TYPE_HEAL);
     elseif (playerClass == 'Paladin') and (playerSpec == 3) then
         -- If Ret Paladin...
-        SetSpell('Flash of Light');
+        SetSpell('Flash of Light', SLOT_TYPE_HEAL);
     end;
 
-    -- Set spell slots.
-    SetSpellModel();
+    -- Set spell slots model.
+    SetSpellSlotsModel();
 end;
 
 -- Used to keep track of each button for each spell.

@@ -3,8 +3,8 @@
 
 -- All groups will be have their key named after Unit Role, except for Me for quick unit finds.
 -- Will adapt as this become more feature rich.
-local GROUP_ME = 'Me';
-local GroupPool = HF_ObjectPool.new(HF_Group); -- Group keys will be by unit role for now.
+GROUP_ME = 'Me';
+HF_GroupPool = HF_ObjectPool.new(HF_Group); -- Group keys will be by unit role for now.
 
 local function UpdateRoster()
     -- print('update roster');
@@ -21,10 +21,10 @@ local function UpdateRoster()
     -- If the player is in a group, update the groups and units with them.
     if (groupSize > 0) then
         -- If the meGroup exists, shut it down.
-        local meGroup = GroupPool:getInstance(GROUP_ME);
+        local meGroup = HF_GroupPool:getInstance(GROUP_ME);
         if (meGroup) then
             meGroup:clearAll();
-            GroupPool:clearInstance(GROUP_ME);
+            HF_GroupPool:clearInstance(GROUP_ME);
         end;
 
         -- When getting the unit name, we need to know whether to check with party or raid.
@@ -33,7 +33,7 @@ local function UpdateRoster()
 
         -- Pass 1: Check to see if there are any units that are no longer in the group.
         -- For every group in the pool...
-        for k, v in pairs(GroupPool:getAll()) do
+        for k, v in pairs(HF_GroupPool:getAll()) do
             -- For every unit in the group...
             for kk, vv in pairs(v.unitPool:getAll()) do
                 local isInParty = UnitInParty(vv.name);
@@ -48,7 +48,7 @@ local function UpdateRoster()
             -- If the final unit of a group has been removed, clear the group.
             if not (#v > 0) then
                 print('Clear group pool');
-                GroupPool:clearInstance(k);
+                HF_GroupPool:clearInstance(k);
             end;
         end;
 
@@ -61,13 +61,13 @@ local function UpdateRoster()
             -- local unitClass = UnitClass(unitName); -- To be used later.
             print('Unit: ', unitName, unitRole);
 
-            local foundUnit = GroupPool:findInAll('unitPool', unitName, true);
-            local group = GroupPool:getOrCreateInstance(unitRole);
+            local foundUnit = HF_GroupPool:findInAll('unitPool', unitName, true);
+            local group = HF_GroupPool:getOrCreateInstance(unitRole);
 
             -- If unit exists and their role has changed, shift them to the proper frame.
             if (foundUnit) and not (foundUnit.role == unitRole) then
                 print('Unit Swapping Roles');
-                local oldUnitGroup = GroupPool:getInstance(foundUnit.role);
+                local oldUnitGroup = HF_GroupPool:getInstance(foundUnit.role);
                 if (oldUnitGroup) then
                     oldUnitGroup:removeUnit(unitName);
                 end;
@@ -109,8 +109,11 @@ local function UpdateRoster()
         -- ME Group here
         local meName = UnitName('player');
         local meRole = UnitGroupRolesAssigned('player');
-        local meGroup = GroupPool:getOrCreateInstance(GROUP_ME);
+        local meGroup = HF_GroupPool:getOrCreateInstance(GROUP_ME);
         meGroup:addUnit(meName, meRole);
+
+        local meGroup2 = HF_GroupPool:getOrCreateInstance(GROUP_ME..2);
+        meGroup2:addUnit(meName, meRole);
 
         -- print('My lone group.', meName);
 
@@ -152,7 +155,7 @@ local function EventActions(_self, _event, ...)
     -- When a player's health or maximum health is changed...
     if (_event == 'UNIT_HEALTH_FREQUENT') or (_event == 'UNIT_MAXHEALTH') then
         local unitName = UnitName(arg1);
-        local unit = GroupPool:findInAll('unitPool', unitName, true);
+        local unit = HF_GroupPool:findInAll('unitPool', unitName, true);
 
         if unit then
             unit:updateHealth();
@@ -163,7 +166,7 @@ local function EventActions(_self, _event, ...)
         HF_HideSpellProc(HF_SpellBook[arg1]);
     elseif (_event == 'UNIT_HEAL_PREDICTION') then
         local unitName = UnitName(arg1);
-        local unit = GroupPool:findInAll('unitPool', unitName, true);
+        local unit = HF_GroupPool:findInAll('unitPool', unitName, true);
 
         if unit then
             unit:updateHealPrediction();
